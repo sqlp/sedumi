@@ -1,4 +1,6 @@
-%                            [delta,h,alpha] = iswnbr(vSQR,thetaSQR)
+function [delta,h,alpha] = iswnbr(w,thetaSQR)
+% [delta,h,alpha] = iswnbr(vSQR,thetaSQR)
+%
 % ISWNBR  Checks feasibility w.r.t. wide region/neighborhood of Sturm-Zhang.
 %   vTAR:= (1-alpha)*max(h,v) projection v onto theta-central region
 %   delta = (sqrt(n)/theta) * norm(vTAR - v) / norm(v)
@@ -7,9 +9,6 @@
 %
 % See also sedumi
 
-
-function [delta,h,alpha] = iswnbr(w,thetaSQR)
-%
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
 % Copyright (C) 2005 McMaster University, Hamilton, CANADA  (since 1.1)
 %
@@ -40,10 +39,8 @@ function [delta,h,alpha] = iswnbr(w,thetaSQR)
 % 02110-1301, USA
 %
 
-disp('The SeDuMi binaries are not installed.')
-disp('In Matlab, launch "install_sedumi" in the folder you put the SeDuMi files.')
-disp('For more information see the file Install.txt.')
-error(' ')
+%Indicate to the user Matlab cannot find the SeDuMi binaries
+sedumi_binary_error();
 
 % ----------------------------------------
 % r = n/thetaSQR

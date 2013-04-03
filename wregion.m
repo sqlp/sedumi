@@ -1,14 +1,14 @@
-%        [xscl,y,zscl,y0, w,relt, dxmdz,err, wr] = wregion(L,Lden,Lsd,...
+function [xscl,y,zscl,y0, w,relt, dxmdz,err, wr] = ...
+    wregion(L,Lden,Lsd,d,v,vfrm,A,DAt,dense, R,K,y,y0,b, pars, wr)
+%  [xscl,y,zscl,y0, w,relt, dxmdz,err, wr] = wregion(L,Lden,Lsd,...
 %                             d,v,vfrm,A,DAt,dense, R,K,y,y0,b, pars, wr)
+%
 % WREGION  Implements Sturm-Zhang Wide-region Interior Point Method.
 %
 % ******************** INTERNAL FUNCTION OF SEDUMI ********************
 %
 % See also sedumi
 
-function [xscl,y,zscl,y0, w,relt, dxmdz,err, wr] = ...
-    wregion(L,Lden,Lsd,d,v,vfrm,A,DAt,dense, R,K,y,y0,b, pars, wr)
-%
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
 % Copyright (C) 2005 McMaster University, Hamilton, CANADA  (since 1.1)
 %
@@ -63,9 +63,9 @@ if wr.delta > 0.0           % initial centering needed ?
     [uzc.u,zispos] = psdfactor(zc,K);
     critval = max(y0, sqrt(min(d.l(1),1/d.l(1)))*v(1));    % >= y0
     critval = max(1E-3, pars.cg.restol) * critval * R.maxRb;
-    if (~xispos) | (~zispos) | (errc.maxb > critval) ...
-            | ( (~isempty(uxc.tdet)) & (min(uxc.tdet) <= 0.0)) ...
-            | ( (~isempty(uzc.tdet)) & (min(uzc.tdet) <= 0.0))
+    if (~xispos) || (~zispos) || (errc.maxb > critval) ...
+            || ( (~isempty(uxc.tdet)) && (min(uxc.tdet) <= 0.0)) ...
+            || ( (~isempty(uzc.tdet)) && (min(uzc.tdet) <= 0.0))
         STOP = -1;   % Reject and terminate
         dxmdz = [];
         err = errc;
@@ -124,7 +124,7 @@ if STOP ~= -1
     % i.e. errb <= phi*(-dy0) * (1+t*dy0/y0) * maxRb
     % ----------------------------------------
     PHI = 0.5;
-    if dy0 < 0 & (PHI*dy0^2*R.maxRb)~=0
+    if dy0 < 0 && (PHI*dy0^2*R.maxRb)~=0
         critval =  - (PHI * dy0*R.maxRb + err.maxb)*y0c / (PHI*dy0^2*R.maxRb);
     else
         critval = 1;

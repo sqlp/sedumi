@@ -86,7 +86,7 @@ elseif isunix,
     flags{end+1} = '-DUNIX';
 end
 if IS64BIT
-    if (VERSION(1)>=7) & (VERSION(2)>=3),
+    if (VERSION(1)>=8) || ((VERSION(1)>=7) && (VERSION(2)>=3)),
         flags{end+1} = '-largeArrayDims';
     else 
         flags{end+1} = '-DmwIndex=int';
@@ -95,13 +95,13 @@ if IS64BIT
     end
 end
 if ispc,
-    if VERSION(1) >= 7 & VERSION(2)>=5, libval = 'blas'; else, libval = 'lapack'; end
-    if IS64BIT, dirval = 'win64'; else, dirval = 'win32'; end
+    if((VERSION(1) >= 8) || (VERSION(1) >= 7 && VERSION(2)>=5)), libval = 'blas'; else libval = 'lapack'; end
+    if(IS64BIT), dirval = 'win64'; else dirval = 'win32'; end
     libs = [ matlabroot, '\extern\lib\', dirval, '\microsoft\libmw', libval, '.lib' ];
-    if ~exist( libs ),
+    if ~exist(libs, 'file'),
         libs = [ matlabroot, '\extern\lib\', dirval, '\microsoft\msvc60\libmw', libval, '.lib' ];
     end
-elseif VERSION(1) >= 7 & VERSION(2)>=5,
+elseif(VERSION(1) >= 8 || (VERSION(1) >= 7 && VERSION(2)>=5))
     libs = '-lmwblas';
 else
     libs = '-lmwlapack';
