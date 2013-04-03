@@ -1,13 +1,12 @@
-%                                          pars = checkpars(pars,lponly)
+function pars = checkpars(pars,lponly)
+% pars = checkpars(pars,lponly)
+%
 % CHECKPARS  Fills in defaults for missing fields in "pars" structure.
 %
 % **********  INTERNAL FUNCTION OF SEDUMI **********
 %
 % See also sedumi
 
-
-function pars = checkpars(pars,lponly)
-%
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
 % Copyright (C) 2005 McMaster University, Hamilton, CANADA  (since 1.1)
 %
@@ -41,7 +40,7 @@ function pars = checkpars(pars,lponly)
 % --------------------------------------------------
 % Algorithm selection parameters
 % --------------------------------------------------
-if ~isfield(pars,'alg') | sum([0 1 2] == pars.alg) == 0
+if ~isfield(pars,'alg') || sum([0 1 2] == pars.alg) == 0
     pars.alg = 2;
 end
 if ~isfield(pars,'beta')       % 0.1 <= beta <= 0.9 (theoretically in (0,1))
@@ -88,7 +87,7 @@ end
 % --------------------------------------------------
 % Initialization
 % --------------------------------------------------
-if ~isfield(pars,'mu') | pars.mu <= 0
+if ~isfield(pars,'mu') || pars.mu <= 0
     pars.mu = 1;
 end
 % --------------------------------------------------

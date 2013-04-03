@@ -1,4 +1,5 @@
-%              [t,wr,w] = widelen(xc,zc,y0, dx,dz,dy0,d2y0, maxt,pars,K)
+function [t,wr,w] = widelen(xc,zc,y0, dx,dz,dy0,d2y0, maxt,pars,K)
+% [t,wr,w] = widelen(xc,zc,y0, dx,dz,dy0,d2y0, maxt,pars,K)
 %
 % WIDELEN  Computes approximate wide-region neighborhood step length.
 % Does extensive line search only if it pays, that is the resulting
@@ -9,8 +10,6 @@
 %
 % See also sedumi
 
-function [t,wr,w] = widelen(xc,zc,y0, dx,dz,dy0,d2y0, maxt,pars,K)
-%
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
 % Copyright (C) 2005 McMaster University, Hamilton, CANADA  (since 1.1)
 %
@@ -39,7 +38,6 @@ function [t,wr,w] = widelen(xc,zc,y0, dx,dz,dy0,d2y0, maxt,pars,K)
 % along with this program; if not, write to the Free Software
 % Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA
 % 02110-1301, USA
-%
 
 thetaSQR = pars.theta^2;
 ix = K.mainblks;
@@ -71,7 +69,7 @@ end
 % ------------------------------------------------------------
 t = 0.0;
 ntry = 0;  % do loop at least once
-while (t < 0.5 * tR) | ( (fullt-tR) + (1e-7 * fullt) < (tR - t) ) | ntry==0
+while (t < 0.5 * tR) || ( (fullt-tR) + (1e-7 * fullt) < (tR - t) ) || ntry==0
     ntry = 1;
     if tR == maxt                       % Bisection
         tM = 0.1 * t + 0.9 * tR;
@@ -105,7 +103,7 @@ while (t < 0.5 * tR) | ( (fullt-tR) + (1e-7 * fullt) < (tR - t) ) | ntry==0
     % ALL:
     wM.lab = [xM(1:K.l).*zM(1:K.l); detxz ./ lab2q; lab2q; psdeig(wM.s,K)];
     [deltaM,hM,alphaM] = iswnbr(wM.lab, thetaSQR);
-    if (deltaM <= pars.beta) | ((tM < fullt / 10) & (deltaM < 1))
+    if (deltaM <= pars.beta) || ((tM < fullt / 10) && (deltaM < 1))
         w = wM;
         t = tM;
         wr.h=hM;

@@ -76,3 +76,5 @@ paper that is available at http://plato.asu.edu/dimacs/node3.html. These are in 
 20100215 Fix: getada1 and getada2 have been backported to matlab, which actually increases speed, due to parallel BLAS
 
 20100215 Fix: global variables are used for some large data structures (ADA, At)
+
+20130404 Fix: Updated to v1.31, corrected bugs in sedumi.m and getada.m, updated .m files as per mlint suggestions, commented length(b) vs length(c) check in pretransfo, recompiled windows mex files, updated install_sedumi.m for MATLAB v8
