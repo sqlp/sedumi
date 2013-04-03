@@ -264,7 +264,7 @@ end
 if N*m<100000
     %Test if Ax=b is feasible at all
     %turn off the rank deficient warning for now
-    warning off all
+    s = warning('off','MATLAB:singularMatrix');
     y=[A;b']\[zeros(N,1);1];
     if abs(y'*b-1) < 1e-10 && norm(A*y) < 1e-10
         %Infeasibility certificate found
@@ -272,6 +272,8 @@ if N*m<100000
         x=[];
         %A dual improving direction could be computed easily
         my_fprintf(pars.fid,'The problem is primal infeasible, there is no x such that Ax=b.\n')
+		%Return warning state
+		warning(s);
         return
     end
     
@@ -294,6 +296,8 @@ if N*m<100000
         %TODO: A preprocessing routine should be added here to remove the dependent
         %rows from A and b
     end
+	%Return warning state
+    warning(s);
 end
 if prep.cpx.dim>0
     origcoeff=[];      % No error measures for complex problems.
