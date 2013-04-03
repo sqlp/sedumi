@@ -18,7 +18,7 @@ else
     %Create a sparse 0 matrix to accomodate the number of nonzeros needed
     ADA = sparse([],[],[],m,m,nnz(ADA));
 end
-if spars(DAt.q > 0.2)
+if spars(DAt.q) > 0.2
     %TODO: This conversion will have to move to getdatm.m
     DAt.q = full(DAt.q);
 end
