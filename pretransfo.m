@@ -159,9 +159,9 @@ end
 if N ~= size(c,1)                     % make c an N x 1 vector
     c = c';
 end
-if N <= m
-    error('Should have length(c) > length(b) in any sensible model')
-end
+% if N <= m
+%     error('Should have length(c) > length(b) in any sensible model')
+% end
 if size(At,2) ~= m
     if m == size(At,1)
         At = At';        %user gave A instead of At.
