@@ -1,4 +1,4 @@
-function [zhi,zlo] = quadadd(xhi,xlo,y)
+function [zhi,zlo] = quadadd(xhi,xlo,y) %#ok
 % [zhi,zlo] = quadadd(xhi,xlo,y)
 %
 % QUADADD   Compute (zhi+zlo) = (xhi+xlo) + y.

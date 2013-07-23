@@ -1,4 +1,4 @@
-function [LL, Ld, Lskip, Ladd] = blkchol(L,X,pars,absd)
+function [LL, Ld, Lskip, Ladd] = blkchol(L,X,pars,absd) %#ok
 % [L.L, L.d, L.skip, L.add] = blkchol(L,X,pars,absd)
 %
 % BLKCHOL Fast block sparse Cholesky factorization.

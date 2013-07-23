@@ -1,5 +1,5 @@
 function [dx,dy,dz,dy0, err] = sddir(L,Lden,Lsd,pv,...
-    d,v,vfrm,At,DAt,dense, R,K,y,y0,b, pars,pMode)
+    d,v,vfrm,At,DAt,dense, R,K,y,y0,b, pars,pMode) %#ok
 % [dx,dy,dz,dy0, err] = sddir(L,Lden,Lsd,p,d,v,vfrm,At,DAt,dense, R,K,y,y0,b, pars)
 %
 % SDDIR  Direction decomposition for Ye-Todd-Mizuno self-dual embedding.

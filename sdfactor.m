@@ -1,4 +1,4 @@
-function Lsd = sdfactor(L,Lden, dense,DAt, d,v,y, At,c,K,R,y0,pars)
+function Lsd = sdfactor(L,Lden, dense,DAt, d,v,y, At,c,K,R,y0,pars) %#ok
 % [Lsd,Rscl] = sdfactor(L,Lden, dense,DAt, d,v,y, At,K,R,y0,pars)
 %
 % SDFACTOR  Factor self-dual embedding

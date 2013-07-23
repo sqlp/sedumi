@@ -1,4 +1,4 @@
-function Ablk = findblks(At,Ablkjc,blk0,blk1,blkstart)
+function Ablk = findblks(At,Ablkjc,blk0,blk1,blkstart) %#ok
 % Ablk = findblks(At,Ablkjc,blk0,blk1,blkstart)
 %
 % FINDBLKS  Find nonzero blocks

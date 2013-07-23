@@ -1,4 +1,4 @@
-function [ADA,absd] = getada3(ADA, A,Ajc1,Aord, udsqr,K)
+function [ADA,absd] = getada3(ADA, A,Ajc1,Aord, udsqr,K) %#ok
 % [ADA,absd] = getada3(ADA, A,Ajc1,Aord, udsqr,K)
 %
 % GETADA3  Compute ADA(i,j) = (D(d^2)*A.t(:,i))' *A.t(:,j),

@@ -1,4 +1,4 @@
-function y = bwblkslv(L,b)
+function y = bwblkslv(L,b) %#ok
 % BWBLKSLV Solves block sparse upper-triangular system.
 %    y = bwblkslv(L,b) yields the same result as
 %              y(L.perm,:) = L.L'\b

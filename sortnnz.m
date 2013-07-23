@@ -1,4 +1,4 @@
-function perm = sortnnz(At,Ajc1,Ajc2)
+function perm = sortnnz(At,Ajc1,Ajc2) %#ok
 % perm = sortnnz(At,Ajc1,Ajc2)
 %
 % SORTNNZ  Sorts columns in At

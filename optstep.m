@@ -48,7 +48,7 @@ if abs(abs(feasratio)-1) < 0.1
     z0 = x0 / d.l(1);
     %This value is never used.
     %deptol = 1E-10 * max(x0,z0);
-    if (feasratio < -0.5) && (x0 < z0^2)
+    if (feasratio < -0.5) && (x0 < z0*z0)
         x0 = 0;                          % Try project onto direction.
     end
     % ------------------------------------------------------------
@@ -82,7 +82,7 @@ if abs(abs(feasratio)-1) < 0.1
     % Solve ADAt*psi = -x0*b+A*D*v, dx = v-D*At*psi.  LEAST SQUARES.
     % ------------------------------------------------------------
     [psi,dx,err.kcg,err.b] = wrapPcg(L,Lden,A,dense,d, DAt,K,...
-        (-x0) * b,v, pars.cg,pars.eps / pars.cg.restol);
+        (-x0) * b,v, pars.cg,pars.eps / pars.cg.restol); %#ok
     x = sqrt(d.l) .* dx;
     % ----------------------------------------
     % CHECK WHETHER x[B] >= 0 AND WHETHER RESIDUAL DID NOT DETERIORATE.

@@ -1,4 +1,4 @@
-function ddotX = ddot(d,X,blkstart, Xblkjc)
+function ddotX = ddot(d,X,blkstart, Xblkjc) %#ok
 % ddotX = ddot(d,X,blkstart [, Xblkjc])
 %
 % DDOT Given N x m matrix X, creates (blkstart(end)-blkstart(1)) x m matrix

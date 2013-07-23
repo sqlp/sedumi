@@ -1,4 +1,4 @@
-function cpx = whichcpx(K)
+function cpx = whichcpx(K) %#ok
 % cpx = whichcpx(K)
 %
 % WHICHCPX  yields structure cpx.{f,q,r,x}

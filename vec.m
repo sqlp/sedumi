@@ -35,5 +35,4 @@ function x = vec(X)
 % Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA
 % 02110-1301, USA
 
-[m n] = size(X);
-x = reshape(X,m*n,1);
+x = reshape(X,numel(X),1);

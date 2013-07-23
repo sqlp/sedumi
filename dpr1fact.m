@@ -1,4 +1,4 @@
-function [Lden,Ld] = dpr1fact(x, d, Lsym, smult, maxu)
+function [Lden,Ld] = dpr1fact(x, d, Lsym, smult, maxu) %#ok
 % [Lden,L.d] = dpr1fact(x, d, Lsym, smult, maxu)
 %
 % DPR1FACT  Factor d[iag] p[lus] r[ank] 1:

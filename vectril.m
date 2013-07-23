@@ -1,4 +1,4 @@
-function y = vectril(x,K)
+function y = vectril(x,K) %#ok
 % y = vectril(x,K)
 %
 % VECTRIL  converts "PSD" blocks to lower triangular form.

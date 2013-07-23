@@ -1,4 +1,4 @@
-function y = invcholfac(u,K, perm)
+function y = invcholfac(u,K, perm) %#ok
 % y = invcholfac(u,K, perm)
 %
 % INVCHOLFAC  Computes y(perm,perm) = u' * u, with u upper triangular.

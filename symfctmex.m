@@ -1,4 +1,4 @@
-function [L,perm,xsuper,split,tmpsiz] = symfctmex(adjncy, perm, cachsz)
+function [L,perm,xsuper,split,tmpsiz] = symfctmex(adjncy, perm, cachsz) %#ok
 % [L,perm,xsuper,split,tmpsiz] = symfctmex(X, perm, cachsz)
 %
 %   Computes sparse symbolic factor L, updated permutation PERM,

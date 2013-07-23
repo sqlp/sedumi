@@ -1,4 +1,4 @@
-function Apart = extractA(At,Ajc,blk0,blk1,blkstart,blkstart2)
+function Apart = extractA(At,Ajc,blk0,blk1,blkstart,blkstart2) %#ok
 % Apart = extractA(At,Ajc,blk0,blk1,blkstart[,blkstart2])
 %
 % EXTRACTA  Fast alternative to

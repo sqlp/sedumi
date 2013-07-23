@@ -1,4 +1,4 @@
-function y = qreshape(x,flag, K)
+function y = qreshape(x,flag, K) %#ok
 % y = qreshape(x,flag, K)
 %
 % QRESHAPE  Reshuffles entries associated with Lorentz blocks.

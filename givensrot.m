@@ -1,4 +1,4 @@
-function y = givensrot(gjc,g,x,K)
+function y = givensrot(gjc,g,x,K) %#ok
 % y = givensrot(gjc,g,x,K)
 %
 % GIVENSROT
