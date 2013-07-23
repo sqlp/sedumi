@@ -217,8 +217,8 @@ function [x,y,info] = sedumi(A,b,c,K,pars)
 
 walltime0=now;
 cputime0=cputime;
-%ADA is usually very large, so we make it global
-global ADA
+%ADA_sedumi_ is usually very large, so we make it global
+global ADA_sedumi_
 % ************************************************************
 % INITIALIZATION
 % ************************************************************
@@ -385,7 +385,7 @@ end
 % ----------------------------------------
 % Get nz-pattern of ADA.
 % ----------------------------------------
-ADA = getsymbada(A,Ablkjc,DAt,K.sblkstart);
+ADA_sedumi_ = getsymbada(A,Ablkjc,DAt,K.sblkstart);
 % ----------------------------------------
 % Ordering and symbolic factorization of ADA.
 % ----------------------------------------
@@ -404,7 +404,7 @@ n = length(vfrm.lab);                         % order of K
 merit = (sum(R.w) + max(R.sd,0))^2 * y0 / R.b0;  % Merit function
 my_fprintf(pars.fid,'eqs m = %g, order n = %g, dim = %g, blocks = %g\n',...
     length(b),n,length(c),1 + length(K.q) + length(K.s));
-my_fprintf(pars.fid,'nnz(A) = %d + %d, nnz(ADA) = %d, nnz(L) = %d\n',nnz(A),nnz(dense.A), nnz(ADA), nnz(L.L));
+my_fprintf(pars.fid,'nnz(A) = %d + %d, nnz(ADA) = %d, nnz(L) = %d\n',nnz(A),nnz(dense.A), nnz(ADA_sedumi_), nnz(L.L));
 if ~isempty(dense.cols)
     my_fprintf(pars.fid,'Handling %d + %d dense columns.\n',...
         length(dense.cols),length(dense.q));
@@ -453,15 +453,15 @@ while STOP == 0
         %This will update the global ADA variable
         absd=getada(A,K,d,DAt);
     else
-        ADA = getada1(ADA, A, Ablkjc(:,3), Aord.lqperm, d, K.qblkstart);
-        ADA = getada2(ADA, DAt, Aord, K);
-        [ADA,absd] = getada3(ADA, A, Ablkjc(:,3), Aord, invcholfac(d.u, K, d.perm), K);
+        ADA_sedumi_ = getada1(ADA_sedumi_, A, Ablkjc(:,3), Aord.lqperm, d, K.qblkstart);
+        ADA_sedumi_ = getada2(ADA_sedumi_, DAt, Aord, K);
+        [ADA_sedumi_,absd] = getada3(ADA_sedumi_, A, Ablkjc(:,3), Aord, invcholfac(d.u, K, d.perm), K);
     end
     %
     % ------------------------------------------------------------
     % Block Sparse Cholesky: ADA(L.perm,L.perm) = L.L*diag(L.d)*L.L'
     % ------------------------------------------------------------
-    [L.L,L.d,L.skip,L.add] = blkchol(L,ADA,pars.chol,absd);
+    [L.L,L.d,L.skip,L.add] = blkchol(L,ADA_sedumi_,pars.chol,absd);
     % ------------------------------------------------------------
     % Factor dense columns
     % ------------------------------------------------------------
@@ -506,7 +506,7 @@ while STOP == 0
         % ------------------------------------------------------------
         STOP = -1;                  % insuf. progress in descent direction.
         iter = iter - 1;
-        y0 = y0Old;
+        y0 = y0Old; %#ok
         my_fprintf(pars.fid,'Run into numerical problems.\n');
         break
     end
@@ -534,7 +534,7 @@ while STOP == 0
     % ----------------------------------------
     if lponly && (rate < 0.05)
         [xsol,ysol] = optstep(A,b,c, y0,y,d,v,dxmdz, ...
-            K,L,symLden,dense, Ablkjc,Aord,ADA,DAt, feasratio, R,pars);
+            K,L,symLden,dense, Ablkjc,Aord,ADA_sedumi_,DAt, feasratio, R,pars);
         if ~isempty(xsol)
             STOP = 2;                   % Means that we guessed right !!
             feasratio = 1 - 2*(xsol(1)==0);
@@ -576,7 +576,7 @@ while STOP == 0
     end
 end % while STOP == 0.
 my_fprintf(pars.fid,'\n');
-clear ADA 
+clear ADA_sedumi_ 
 nnzLadd=nnz(L.add);
 nnzLskip=nnz(L.skip);
 normLL=full(max(max(abs(L.L))));
@@ -728,7 +728,7 @@ end
 % - bring ysol into complex format, indicated by K.ycomplex.
 % - at 0's in ysol where rows where removed.
 % ----------------------------------------'
-[x,y] = posttransfo(x,y,prep,K,pars);
+[x,y,K] = posttransfo(x,y,prep,K,pars); %#ok
 % Detailed timing
 %Preprocessing+IPM+Postprocessing
 info.timing=86400*[walltime1-walltime0 walltime2-walltime1 now-walltime2];
@@ -804,5 +804,3 @@ if ~isempty(origcoeff)
     my_fprintf(pars.fid,'%2.2E  ',info.err)
     my_fprintf(pars.fid,'\n')
 end
-
-
