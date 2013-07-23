@@ -272,8 +272,8 @@ if N*m<100000
         x=[];
         %A dual improving direction could be computed easily
         my_fprintf(pars.fid,'The problem is primal infeasible, there is no x such that Ax=b.\n')
-		%Return warning state
-		warning(s);
+        %Return warning state
+        warning(s);
         return
     end
     
@@ -296,7 +296,7 @@ if N*m<100000
         %TODO: A preprocessing routine should be added here to remove the dependent
         %rows from A and b
     end
-	%Return warning state
+    %Return warning state
     warning(s);
 end
 if prep.cpx.dim>0
@@ -525,8 +525,8 @@ while STOP == 0
     my_fprintf(pars.fid,' %2.0f : %10.2E %8.2E %5.3f %6.4f %6.4f %6.4f %6.2f %2d %2d  ',...
         iter,by/x0,merit,wr.delta,rate,relt.p,relt.d,feasratio,err.kcg, Lsd.kcg);
     if pars.vplot == 1
-        vlist = [vlist vfrm.lab/sqrt((R.b0*y0)/n)];
-        ratelist = [ratelist rate];
+        vlist = [vlist vfrm.lab/sqrt((R.b0*y0)/n)]; %#ok
+        ratelist = [ratelist rate]; %#ok
     end
     % ----------------------------------------
     % If we get in superlinear region of LP,
@@ -649,6 +649,7 @@ end % x0 > 0
 % ------------------------------------------------------------
 % Interpret the solution as feasible:
 % ------------------------------------------------------------
+info.r0 = Inf;
 if x0 > 0
     x = x / x0;
     y = y / x0;
@@ -658,12 +659,19 @@ if x0 > 0
     by = by / x0;
     normx = normx / x0;
     normy = normy / x0;
-    if cx == 0.0           % Dual feasibility problem
-        sigdig = -log(-by/(R.maxb*normy +1E-10 * x0)) / log(10);
+    if cx <= by                % zero or negative duality gap
+        r0 = 0;
+    elseif cx == 0.0           % Dual feasibility problem
+        r0 = -by/(R.maxb*normy +1E-10 * x0);
     elseif by == 0.0           % Primal feasibility problem
-        sigdig = -log(cx / (R.maxc*normx +1E-10 * x0)) / log(10);
+        r0 = cx / (R.maxc*normx +1E-10 * x0);
     else                       % Optimization problem
-        sigdig = -log(abs(cx-by)/(abs(by) + 1E-5 * (x0+abscx))) / log(10);
+        r0 = (cx-by)/(abs(by) + 1E-5 * (x0+abscx));
+    end
+    if r0 == 0,
+        sigdig = Inf;
+    else
+        sigdig = -log10(r0);
     end
     my_fprintf(pars.fid,...
         'iter seconds digits       c*x               b*y\n');
@@ -674,23 +682,26 @@ if x0 > 0
     % ------------------------------------------------------------
     % Determine level of numerical problems with x0>0 (feasible)
     % ------------------------------------------------------------
-    if STOP == -1
-        r0 = max([10^(-sigdig); pinf;dinf] ./ [1; 1+R.maxb+(1E-3)*R.maxRb;...
+    info.r0 = max([r0 ; pinf;dinf] ./ [1; 1+R.maxb+(1E-3)*R.maxRb;...
             1+R.maxc+(1E-3)*R.maxRc]);
-        if r0 > pars.bigeps
+    if STOP == -1
+        if info.r0 > pars.bigeps
             my_fprintf(pars.fid, 'No sensible solution found.\n');
             info.numerr = 2;                          % serious numerical error
-        elseif r0 > pars.eps
+        elseif info.r0 > pars.eps
             info.numerr = 1;                          % moderate numerical error
         else
             info.numerr = 0;                          % achieved desired accuracy
         end
+    else
+        info.r0 = min( info.r0, pars.eps );
     end
 else  % (if x0>0)
     % --------------------------------------------------
     % Infeasible problems: pinf==norm(Ax), dinf==max(eigK(At*y,K)).
     % --------------------------------------------------
     if pinf < -pars.bigeps * cx
+        info.r0 = abs(pinf/cx);
         info.dinf = 1;
         abscx = -cx;
         pinf = pinf / abscx;
@@ -699,6 +710,7 @@ else  % (if x0>0)
         my_fprintf(pars.fid, 'Dual infeasible, primal improving direction found.\n');
     end
     if dinf < pars.bigeps * by
+        info.r0 = abs(dinf/by);
         info.pinf = 1;
         dinf = dinf / by;
         normy = normy / by;
