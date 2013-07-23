@@ -8,17 +8,17 @@ function absd=getada(A,K,d,DAt)
 % d: The scaling elements
 % DAt: The scaled A matrix used in getada2
 
-global ADA
-%This is why ADA is not in the function calling sequence, it's global
-m = size(ADA,1);
-if spars(ADA) > 0.3
+global ADA_sedumi_
+%This is why ADA_sedumi_ is not in the function calling sequence, it's global
+m = size(ADA_sedumi_,1);
+if spars(ADA_sedumi_) > 0.3
     %We convert it to a dense 0 matrix
-    ADA = zeros(m,m);
+    ADA_sedumi_ = zeros(m,m);
 else
     %Create a sparse 0 matrix to accomodate the number of nonzeros needed
-    ADA = sparse([],[],[],m,m,nnz(ADA));
+    ADA_sedumi_ = sparse([],[],[],m,m,nnz(ADA_sedumi_));
 end
-if spars(DAt.q) > 0.2
+if spars(DAt.q > 0.2)
     %TODO: This conversion will have to move to getdatm.m
     DAt.q = full(DAt.q);
 end
@@ -31,10 +31,10 @@ for i = 1:length(d.det)
     scalingvector(K.qblkstart(i):K.qblkstart(i+1)-1) = d.det(i);
 end
 %getada2
-ADA = ADA+DAt.q'*DAt.q;
+ADA_sedumi_ = ADA_sedumi_+DAt.q'*DAt.q;
 clear DAt
 %getada1
-ADA = ADA+Alq'*diag(sparse(scalingvector))*Alq;
+ADA_sedumi_ = ADA_sedumi_+Alq'*diag(sparse(scalingvector))*Alq;
 clear Alq
-ADA = sparse(ADA);
-absd = full(diag(ADA));
+ADA_sedumi_ = sparse(ADA_sedumi_);
+absd = full(diag(ADA_sedumi_));
