@@ -1,4 +1,4 @@
-function y = qblkmul(mu,d,blkstart)
+function y = qblkmul(mu,d,blkstart) %#ok
 % y = qblkmul(mu,d,blkstart)
 %
 % QBLKMUL  yields length(y)=blkstart(end)-blkstart(1) vector with

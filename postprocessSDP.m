@@ -51,11 +51,11 @@ for j = length(prepinfo):-1:1
     switch op(1)
         case 0
             %Do nothing
-            x = [newx(end-op(2)+1:end);x];
+            x=[newx(end-op(2)+1:end);x]; %#ok
             newx = newx(1:end-op(2));
         case 1
-            %Convert nonnegative variables inot a diagonal PSD matrix
-            x = [reshape(diag(newx(1:op(2))),op(2)^2,1);x];
+            %Convert nonnegative variables into a diagonal PSD matrix
+            x = [reshape(diag(newx(1:op(2))),op(2)^2,1);x]; %#ok
             newx = newx(op(2)+1:end);
             K.l = K.l-op(2);
             K.s(end+1) = op(2);

@@ -75,14 +75,14 @@ for i = 1:length(K.s)
     if bandwidth==0
         %We have a diagonal block, we convert it to nonnegative variables.
         newK.l = newK.l + K.s(i);
-        prepinfo{end+1} = [1; K.s(i)];
+        prepinfo{end+1}=[1; K.s(i)]; %#ok
     else
         newK.s = [newK.s; K.s(i)];
         %If the previous block is also unchanged then we join them together.
         if  prepinfo{end}(1)==0
             prepinfo{end}(2) = prepinfo{end}(2)+K.s(i)^2;
         else
-            prepinfo{end+1} = [0; K.s(i)^2];
+            prepinfo{end+1}=[0; K.s(i)^2]; %#ok
         end
     end
 end
@@ -95,14 +95,14 @@ for j = 1:length(prepinfo)
     switch op(1)
         case 0
             %Do nothing
-            newAt = [newAt;At(1:op(2),:)];
-            newc = [newc;c(1:op(2))];
+            newAt=[newAt;At(1:op(2),:)]; %#ok
+            newc=[newc;c(1:op(2))]; %#ok
             At = At(op(2)+1:end,:);
             c = c(op(2)+1:end);
         case 1
             %Diagonal matrix
-            newAt = [[At(1:op(2)+1:op(2)^2,:),sparse(op(2),size(newAt,2)-size(At,2))];newAt];
-            newc = [c(1:op(2)+1:op(2)^2);newc];
+            newAt=[[At(1:op(2)+1:op(2)^2,:),sparse(op(2),size(newAt,2)-size(At,2))];newAt]; %#ok
+            newc=[c(1:op(2)+1:op(2)^2);newc]; %#ok
             At = At(op(2)^2+1:end,:);
             c = c(op(2)^2+1:end);
             newK.rsdpN = newK.rsdpN-1;

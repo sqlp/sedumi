@@ -1,4 +1,4 @@
-function pars = checkpars(pars,lponly)
+function pars = checkpars(pars,lponly) %#ok
 % pars = checkpars(pars,lponly)
 %
 % CHECKPARS  Fills in defaults for missing fields in "pars" structure.

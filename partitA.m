@@ -1,4 +1,4 @@
-function Ablkjc = partitA(At,blkstart)
+function Ablkjc = partitA(At,blkstart) %#ok
 % Ablkjc = partitA(At,blkstart)
 %
 % PARTITA  Partition columns of A according to the subscripts listed in blkstart.

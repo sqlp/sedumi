@@ -1,4 +1,4 @@
-function z = psdinvjmul(xlab,xfrm, y, K)
+function z = psdinvjmul(xlab,xfrm, y, K) %#ok
 % z = psdinvjmul(xlab,xfrm, y, K)
 %
 % PSDINVJMUL  solves x jmul z = y, with x = XFRM*diag(xlab)*XFRM'

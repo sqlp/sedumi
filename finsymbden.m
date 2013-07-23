@@ -1,4 +1,4 @@
-function Lden = finsymbden(LAD,perm,dz,firstq)
+function Lden = finsymbden(LAD,perm,dz,firstq) %#ok
 % Lden = finsymbden(LAD,perm,dz,firstq)
 %
 % FINSYMBDEN  Updates perm and dz by inserting the

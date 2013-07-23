@@ -1,4 +1,4 @@
-function y = makereal(x,K,cpx)
+function y = makereal(x,K,cpx) %#ok
 % y = makereal(x,K,cpx)
 %
 % MAKEREAL  Converts matrix in MATLAB-complex format to internal

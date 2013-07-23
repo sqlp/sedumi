@@ -1,4 +1,4 @@
-function y = vecsym(x,K)
+function y = vecsym(x,K) %#ok
 % y = vecsym(x,K)
 %
 % VECSYM  For the PSD submatrices, we let Yk = (Xk+Xk')/2

@@ -1,4 +1,4 @@
-function [u,perm,gjc,g] = urotorder(u,K, maxu,permIN)
+function [u,perm,gjc,g] = urotorder(u,K, maxu,permIN) %#ok
 % [u,perm,gjc,g] = urotorder(u,K, maxu,permIN)
 %
 % UROTORDER  Stable reORDERing of triu U-factor by Givens ROTations.

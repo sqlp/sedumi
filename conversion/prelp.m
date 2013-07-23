@@ -21,7 +21,7 @@
 %
 % See also sedumi, getproblem, postprocess (LIPSOL), frompack, lipsol.
 
-function [A,b,c,lenx,lbounds] = prelp(pname)
+function [A,b,c,lenx,lbounds,times] = prelp(pname)
 %
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
 % Copyright (C) 2005 McMaster University, Hamilton, CANADA  (since 1.1)
@@ -55,7 +55,7 @@ function [A,b,c,lenx,lbounds] = prelp(pname)
 
 global OUTFID
 global Ubounds_exist
-
+if ~exist('loadata','file') || ~exist('preprocess','file')
 if ~exist('loadata','file') | ~exist('preprocess','file')
     error('To use PRELP, you need to have LIPSOL installed.')
 end
@@ -66,7 +66,7 @@ end
 if (nargin == 0)
     pname = input('Enter problem name: ','s');
 end
-
+[A,b,c,lbounds,ubounds,BIG] = loadata(pname);
 t0 = cputime;
 [A,b,c,lbounds,ubounds,BIG,NAME] = loadata(pname);
 times(1) = cputime - t0;

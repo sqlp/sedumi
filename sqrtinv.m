@@ -1,4 +1,4 @@
-function y = sqrtinv(q,vlab,K)
+function y = sqrtinv(q,vlab,K) %#ok
 % y = sqrtinv(q,vlab,K)
 %
 % SQRTINV  Computes for PSD-cone, y = (Q / diag(sqrt(vlab)))', so that

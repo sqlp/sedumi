@@ -1,4 +1,4 @@
-function ADA = getada1(ADA, A,Ajc2,perm, d, blkstart)
+function ADA = getada1(ADA, A,Ajc2,perm, d, blkstart) %#ok
 % ADA = getada1(ADA, A,Ajc2,perm, d, blkstart)
 %
 % GETADA1  Compute ADA(i,j) = (D(d^2; LP,Lorentz)*A.t(:,i))' *A.t(:,j),

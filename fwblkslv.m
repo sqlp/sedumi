@@ -1,4 +1,4 @@
-function y = fwblkslv(L,b)
+function y = fwblkslv(L,b) %#ok
 % y = fwblkslv(L, b)
 %
 % FWBLKSLV Solves block sparse upper-triangular system.

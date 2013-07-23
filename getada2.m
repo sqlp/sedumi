@@ -1,4 +1,4 @@
-function ADA = getada2(ADA, DAt,Aord, K)
+function ADA = getada2(ADA, DAt,Aord, K) %#ok
 % ADA = getada2(ADA, DAt,Aord, K)
 %
 % GETADA2  Compute ADA += DAt.q'*DAt.q

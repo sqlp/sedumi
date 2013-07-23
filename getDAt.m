@@ -1,4 +1,4 @@
-function [DAtq, DAts] = getDAt(At,Ablk,colsel, d,ud,K)
+function [DAtq, DAts] = getDAt(At,Ablk,colsel, d,ud,K) %#ok
 % [DAtq, DAts] = getDAt(At,Ablk,colsel, d,ud,K)
 %
 % Creates

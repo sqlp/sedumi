@@ -73,7 +73,7 @@ for j = 1:n
         sumdifv = sumdifv + (sqrt(oldhSQR)-sqrt(wj)) + ...
             cardT * (sqrt(hSQR)-sqrt(oldhSQR));
     else                    % Inconclusive: j in Q
-        wQ = [wQ;wj];
+        wQ = [wQ;wj]; %#ok
     end % if
 end % for
 % ----------------------------------------

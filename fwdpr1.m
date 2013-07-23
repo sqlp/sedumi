@@ -1,4 +1,4 @@
-function y = fwdpr1(Lden, b)
+function y = fwdpr1(Lden, b) %#ok
 % y = fwdpr1(Lden, b)
 %
 % FWDPR1  Solves "PROD_k L(pk,betak) * y = b", where

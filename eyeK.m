@@ -1,4 +1,4 @@
-function x = eyeK(K)
+function x = eyeK(K) %#ok
 % eyeK    Identity w.r.t. symmetric cone.
 %
 %    x = eyeK(K) produces the identity solution w.r.t. the symmetric cone,

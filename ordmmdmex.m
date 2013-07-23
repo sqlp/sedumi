@@ -1,4 +1,4 @@
-function perm = ordmmdmex(adjncy)
+function perm = ordmmdmex(adjncy) %#ok
 % perm = ordmmdmex(adjncy)
 %
 %   Computes multiple-minimum-degree permutation, for sparse

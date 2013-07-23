@@ -1,4 +1,4 @@
-function [perm, dz] = incorder(At,Ajc1,ifirst)
+function [perm, dz] = incorder(At,Ajc1,ifirst) %#ok
 % [perm, dz] = incorder(At [,Ajc1,ifirst])
 % INCORDER
 % perm sorts the columns of At greedily, by iteratively picking
