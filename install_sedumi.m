@@ -1,4 +1,4 @@
-function install_sedumi(nopath)
+function install_sedumi
 
 %SeDuMi installation script
 %
@@ -76,46 +76,55 @@ targets64={...
     };
 
 disp( 'Building SeDuMi binaries...' )
+ISOCTAVE = exist('OCTAVE_VERSION','builtin');
 COMPUTER = computer;
-VERSION  = sscanf(version,'%d.%d');
-IS64BIT  = strcmp(COMPUTER(end-1:end),'64');
-flags{1} = '-O';
+VERSION  = [1,0.1]*sscanf(version,'%d.%d');
+IS64BIT  = ~ISOCTAVE & strcmp(COMPUTER(end-1:end),'64');
+mexprog  = 'mex';
 if ispc,
-    flags{end+1} = '-DPC';
+    flags = {'-DPC'};
 elseif isunix,
-    flags{end+1} = '-DUNIX';
+    flags = {'-DUNIX'};
 end
-if IS64BIT
-    if (VERSION(1)>=8) || ((VERSION(1)>=7) && (VERSION(2)>=3)),
+libs = {};
+if ISOCTAVE,
+    % Octave has mwSize and mwIndex hardcoded in mex.h as ints.
+    % There is no definition for mwSignedIndex so include it here.  
+    % This means that Octave ignores the -largeArrayDims flag.
+    flags{end+1} = '-DmwSignedIndex=int';
+    libs{end+1} = '-lblas';
+else
+    if nargin > 1 && ~isempty(endpath),
+        flags{end+1} = '-outdir';
+        flags{end+1} = endpath;
+    end
+    flags{end+1} = '-O';
+    if IS64BIT && ( VERSION >= 7.3 ),
         flags{end+1} = '-largeArrayDims';
-    else 
+    elseif VERSION < 7.3,
         flags{end+1} = '-DmwIndex=int';
         flags{end+1} = '-DmwSize=int';
         flags{end+1} = '-DmwSignedIndex=int';
     end
-end
-if ispc,
-    if((VERSION(1) >= 8) || (VERSION(1) >= 7 && VERSION(2)>=5)), libval = 'blas'; else libval = 'lapack'; end
-    if(IS64BIT), dirval = 'win64'; else dirval = 'win32'; end
-    libs = [ matlabroot, '\extern\lib\', dirval, '\microsoft\libmw', libval, '.lib' ];
-    if ~exist(libs, 'file'),
-        libs = [ matlabroot, '\extern\lib\', dirval, '\microsoft\msvc60\libmw', libval, '.lib' ];
+    if ~ispc,
+        libs{end+1} = '-lmwlapack';
+        if VERSION >= 7.5, libs{end+1} = '-lmwblas'; end
     end
-elseif(VERSION(1) >= 8 || (VERSION(1) >= 7 && VERSION(2)>=5))
-    libs = '-lmwblas';
-else
-    libs = '-lmwlapack';
 end
+libs = sprintf( ' %s', libs{:} );
 flags = sprintf( ' %s', flags{:} );
 for i=1:length(targets64)
-    temp =  [ 'mex ', flags, ' ', targets64{i}, ' "', libs ,'"'];
+    temp =  [ mexprog, flags, ' ', targets64{i}, libs ];
     disp( temp );
     eval( temp );
 end
 disp( 'Done!' )
-
 if nargin < 1,
+    if ISOCTAVE,
+	disp('Adding SeDuMi to the Octave path')
+    else
     disp('Adding SeDuMi to the Matlab path')
+    end
     path(path,pwd);
     cd conversion
     path(path,pwd);
@@ -123,7 +132,12 @@ if nargin < 1,
     cd examples
     path(path,pwd);
     cd ..
+    if ISOCTAVE
+        disp('Please save the Octave path if you want to use SeDuMi from any directory.'); 
+        disp('To do this type savepath at the Octave prompt.');
+    else
     disp('Please save the Matlab path if you want to use SeDuMi from any directory.');
     disp('Go to File/Set Path and click on Save.');
+    end
     disp('SeDuMi has been succesfully installed. For more information type help sedumi or see the User guide.')
 end
