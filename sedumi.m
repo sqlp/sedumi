@@ -541,7 +541,7 @@ while STOP == 0
             break
         end
     elseif (by > 0) && (abs(1+feasratio) < 0.05) && (R.b0*y0 < 0.5)
-        if max(eigK(full(qreshape(Amul(A,dense,y,1),1,K)),K)) <= pars.eps * by
+        if maxeigK(qreshape(Amul(A,dense,y,1),1,K),K) <= pars.eps * by
             STOP = 3;                   % Means Farkas solution found !
             break
         end
@@ -618,7 +618,7 @@ clear A
 % ------------------------------------------------------------
 pinf = norm(x0*b-Ax);
 z = qreshape(Ay-x0*c,1,K);
-dinf = max(eigK(z,K));
+dinf = maxeigK(z,K);
 if x0 > 0
     relinf = max(pinf / (1+R.maxb), dinf / (1+R.maxc)) / x0;
     % ------------------------------------------------------------
@@ -626,7 +626,7 @@ if x0 > 0
     % ------------------------------------------------------------
     if relinf > pars.eps
         pdirinf = norm(Ax);
-        ddirinf = max(eigK(qreshape(Ay,1,K),K));
+        ddirinf = maxeigK(qreshape(Ay,1,K),K);
         if cx < 0.0
             reldirinf = pdirinf / (-cx);
         else
@@ -796,9 +796,9 @@ if ~isempty(origcoeff)
     if origcoeff.K.f<length(origcoeff.c)
         %not all primal variables are free
         %     Primal cone infeasibility
-        info.err(2)=max(0,-min(eigK(full(x(origcoeff.K.f+1:end)),origcoeff.K))/(1+normb));
+        info.err(2)=max(0,-mineigK(full(x(origcoeff.K.f+1:end)),origcoeff.K)/(1+normb));
         %     Dual cone infeasibility
-        info.err(4)=max(0,-min(eigK(full(s(origcoeff.K.f+1:end)),origcoeff.K))/(1+normc));
+        info.err(4)=max(0,-mineigK(full(s(origcoeff.K.f+1:end)),origcoeff.K)/(1+normc));
         
     else
         info.err(2)=0;
