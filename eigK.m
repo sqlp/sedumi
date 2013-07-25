@@ -1,4 +1,5 @@
-function [lab,q,f] = eigK(x,K)
+function lab = eig(x,K)
+
 % [lab,q,f] = eigK(x,K)
 %
 % EIGK  Computes the spectral values ("eigenvalues") or even the complete
@@ -7,20 +8,18 @@ function [lab,q,f] = eigK(x,K)
 %
 % > LAB = EIGK(x,K) This yield the spectral values of x with respect to
 %       the self-dual homogeneous cone that you describe in the structure
-%       K. Up to 3 fields can be used, called K.l, K.q and K.s, for
-%       Linear, Quadratic and Semi-definite. Type `help sedumi' for more
-%       details on this structure.
+%       K. Up to 4 fields can be used, called K.l, K.q, K.r, and K.s, for
+%       Linear, Quadratic, Rotated, and Semi-definite. Type `help sedumi' 
+%       for more details on this structure.
 %
-%       The length of the vector LAB is the order of the cone. Remark that
+%       The length of the vector LAB is the order of the cone. Note that
 %       x in K if and only if LAB>=0, and x in int(K) if and only if LAB>0.
-%
-% > [LAB,Q,F] = EIGK(x,K) Also produces the eigenvectors for the symmetric and
-%       Hermitian parts of x (corresponding to K.s), and the Lorentz frame F
-%       for the Lorentz blocks in x (corresponding to K.q). This extended
-%       version of EIGK is intended for INTERNAL USE BY SEDUMI.
 %
 % See also sedumi, mat, vec, eyeK.
 
+% Complete rewrite for SeDuMi 1.3 by Michael C. Grant
+% Copyright (C) 2013 Michael C. Grant.
+%
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
 % Copyright (C) 2005 McMaster University, Hamilton, CANADA  (since 1.1)
 %
@@ -51,58 +50,69 @@ function [lab,q,f] = eigK(x,K)
 % 02110-1301, USA
 %
 
-%Indicate to the user Matlab cannot find the SeDuMi binaries
-sedumi_binary_error();
-
-
-% THE M-FILE VERSION OF THIS FUNCTION IS HERE ONLY AS ILLUSTRATION.
-% SEE THE C-SOURCE FOR THE MEX-VERSION.
-lab = zeros(K.l + 2*length(K.q) + sum(K.s),1);
-% ----------------------------------------
-% LP: lab = x
-% ----------------------------------------
-lab(1:K.l) = x(1:K.l);
-firstk = K.l+1;
-nextlab = K.l+1;
-% ----------------------------------------
-% LORENTZ: (lab, f) = qeig(x)
-% ----------------------------------------
-if nargout < 3
-    for k=1:length(K.q)
-        nk = K.q(k); lastk = firstk + nk - 1;
-        lab(nextlab:nextlab+1) = qeig(x(firstk:lastk));
-        firstk = lastk + 1; nextlab = nextlab + 2;
+xi = 0;
+lab_c = [];
+if isfield(K,'f'),
+    xi = xi + K.f;
+end
+if isfield(K,'l') && K.l > 0,
+    lab_c{end+1} = x(xi+1:xi+K.l);
+    xi = xi+K.l;
+end
+if isfield(K,'q') && ~isempty(K.q),
+    lab = zeros(2*length(K.q),1);
+    li = 0;
+    for k = 1:length(K.q)
+        kk = K.q(k);
+        x0 = x(xi+1);
+        lab(li+1:li+2) = x0+[-1;+1]*norm(x(xi+2:xi+kk));
+        xi = xi + kk;
+        li = li + 2;
     end
-else
-    nextf = 1;
-    for k=1:length(K.q)
-        nk = K.q(k); lastk = firstk + nk - 1;
-        [labk, fk] = qeig(x(firstk:lastk));
-        lab(nextlab:nextlab+1) = labk;
-        f(nextf:nextf+nk-2) = fk;
-        firstk = lastk + 1; nextlab = nextlab + 2; nextf = nextf + nk-1;
+    lab_c{end+1} = lab * sqrt(0.5);
+end
+if isfield(K,'r') && ~isempty(K.r),
+    % This is a simpler formula than the one found in eigK.c. In theory
+    % there could be cancellation error in the smaller eigenvalue. But 
+    % the rotated Lorentz vector is not used internally where this
+    % cancellation error might matter.
+    lab = zeros(2*length(K.r),1);
+    li = 0;
+    for k = 1:length(K.r)
+        kk = K.r(k);
+        x1 = xx(xi+1);
+        x2 = xx(xi+2);
+        lab(li+1:li+2) = x1+x2+[-1;+1]*norm([x1-x2;2*x(xi+3:xi+kk)]);
+        xi = xi + kk;
+        li = li + 2;
     end
+    lab_c{end+1} = lab * 0.5;
 end
-% ----------------------------------------
-% SDP: [q,lab] = eig(x)
-% ----------------------------------------
-offq = firstk - 1;
-q = zeros(length(x)-offq,1);
-for k = 1:K.rsdpN
-    nk = K.s(k); lastk = firstk + nk*nk - 1;
-    Xk = mat(x(firstk:lastk),nk);
-    Xk = (Xk + Xk') / 2;
-    [Qk, Labk] = eig(Xk);
-    lab(nextlab:nextlab+nk-1) = diag(Labk);
-    q(firstk-offq:lastk-offq) = Qk;
-    firstk = lastk + 1; nextlab = nextlab + nk;
+if isfield(K,'s') && ~isempty(K.s),
+    lab = zeros(sum(K.s),1);
+    li = 0;
+    Ks = K.s;
+    Kq = K.s .* K.s;
+    nc = length(Ks);
+    % When used internally, Hermitian terms are broken apart into real and
+    % imaginary halves, so we need to catch this.
+    if isfield(K,'rsdpN'),
+        nr = K.rsdpN;
+    else
+        nr = nc;
+    end
+    for i = 1 : nc,
+        ki = Ks(i);
+        qi = Kq(i);
+        XX = x(xi+1:xi+qi); xi=xi+qi;
+        if i > nr,
+            XX = XX + 1i*x(xi+1:xi+qi); xi=xi+qi;
+        end
+        XX = reshape(XX,ki,ki);
+        lab(li+1:li+ki) = 0.5 * eig( XX + XX' );
+        li = li + ki;
+    end
+    lab_c{end+1} = lab;
 end
-for k = (1+K.rsdpN):length(K.s)
-    nk = K.s(k); ifirstk = firstk + nk*nk; lastk = ifirstk + nk*nk - 1;
-    Xk = mat(x(firstk:ifirstk-1)+sqrt(-1)*x(ifirstk:lastk),nk);
-    [Qk, Labk] = eig(Xk);
-    lab(nextlab:nextlab+nk-1) = real(diag(Labk));
-    q(firstk-offq:ifirstk-1-offq) = real(Qk);
-    q(ifirstk-offq:lastk-offq) = imag(Qk);
-    firstk = lastk + 1; nextlab = nextlab + nk;
-end
+lab = vertcat(lab_c{:});
+
