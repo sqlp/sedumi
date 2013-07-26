@@ -176,6 +176,14 @@ function [x,y,info] = sedumi(A,b,c,K,pars)
 %    measures as defined in the Seventh DIMACS Challenge. For more details
 %    see the User Guide.
 %
+%    (13) pars.free   By default, pars.free=1, and all free variables are
+%                     collected into a single second-order cone block. If
+%                     pars.free=0, then they are each split into the
+%                     difference off two nonnegative variables. If
+%                     pars.free=2, then SeDuMi uses the split approach if
+%                     the rest of the problem is an LP, and the
+%                     second-order cone approach otherwise.
+%
 % Bug reports can be submitted at http://sedumi.mcmaster.ca.
 %
 % See also mat, vec, cellK, eyeK, eigK
@@ -348,11 +356,10 @@ if pars.prep==1
         my_fprintf(pars.fid,'Detected %i free variables in the linear part\n',length(prep.freeblock1));
     end
     if isfield(prep,'Kf') && prep.Kf>0
-        switch pars.free
-            case 0
-                my_fprintf(pars.fid,'Split %i free variables\n',prep.Kf);
-            case 1
-                my_fprintf(pars.fid,'Put %i free variables in a quadratic cone\n',prep.Kf);
+        if pars.free == 0 || pars.free == 2 && isempty(K.q),
+            my_fprintf(pars.fid,'Split %i free variables\n',prep.Kf);
+        else
+            my_fprintf(pars.fid,'Put %i free variables in a quadratic cone\n',prep.Kf);
         end
     end
 end
@@ -796,9 +803,9 @@ if ~isempty(origcoeff)
     if origcoeff.K.f<length(origcoeff.c)
         %not all primal variables are free
         %     Primal cone infeasibility
-        info.err(2)=max(0,-mineigK(full(x(origcoeff.K.f+1:end)),origcoeff.K)/(1+normb));
+        info.err(2)=max(0,-min(eigK(full(x(origcoeff.K.f+1:end)),origcoeff.K)/(1+normb)));
         %     Dual cone infeasibility
-        info.err(4)=max(0,-mineigK(full(s(origcoeff.K.f+1:end)),origcoeff.K)/(1+normc));
+        info.err(4)=max(0,-min(eigK(full(s(origcoeff.K.f+1:end)),origcoeff.K)/(1+normc)));
         
     else
         info.err(2)=0;

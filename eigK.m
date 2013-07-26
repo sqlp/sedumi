@@ -1,4 +1,4 @@
-function lab = eig(x,K)
+function lab = eigK(x,K)
 
 % [lab,q,f] = eigK(x,K)
 %
@@ -50,53 +50,73 @@ function lab = eig(x,K)
 % 02110-1301, USA
 %
 
+% The existence of rsdpN is code for 'is this the internal format?'
+is_int = isfield(K,'rsdpN');
+if is_int,
+    N = K.l+2*length(K.q)+sum(K.s);
+else    
+    N = 0;
+    if isfield(K,'l'), N = N + K.l; end
+    if isfield(K,'q'), N = N + 2*length(K.q); end
+    if isfield(K,'r'), N = N + 2*length(K.r); end
+    if isfield(K,'s'), N = N + sum(K.s); end
+end
+li = 0;
 xi = 0;
-lab_c = [];
-if isfield(K,'f'),
+lab = zeros(N,1);
+if ~is_int && isfield(K,'f'),
     xi = xi + K.f;
 end
 if isfield(K,'l') && K.l > 0,
-    lab_c{end+1} = x(xi+1:xi+K.l);
+    li(li+1:li+K.l) = x(xi+1:xi+K.l);
     xi = xi+K.l;
+    li = li+K.l;
 end
 if isfield(K,'q') && ~isempty(K.q),
-    lab = zeros(2*length(K.q),1);
-    li = 0;
-    for k = 1:length(K.q)
-        kk = K.q(k);
-        x0 = x(xi+1);
-        lab(li+1:li+2) = x0+[-1;+1]*norm(x(xi+2:xi+kk));
-        xi = xi + kk;
-        li = li + 2;
+    tmp = sqrt(0.5);
+    if is_int,
+        % Internal version: all of the x0 values are at the front, and the
+        % vectors are stacked in order after that.
+        zi = xi;
+        xi = xi + length(K.q);
+        for k = 1:length(K.q)
+            kk = K.q(k) - 1;
+            x0 = x(zi+k);
+            lab(li+1:li+2) = tmp*(x0+[-1;+1]*norm(x(xi+1:xi+kk)));
+            xi = xi + kk;
+            li = li + 2;
+        end
+    else
+        for k = 1:length(K.q)
+            kk = K.q(k);
+            x0 = x(xi+1);
+            lab(li+1:li+2) = tmp*(x0+[-1;+1]*norm(x(xi+2:xi+kk)));
+            xi = xi + kk;
+            li = li + 2;
+        end
     end
-    lab_c{end+1} = lab * sqrt(0.5);
 end
-if isfield(K,'r') && ~isempty(K.r),
-    % This is a simpler formula than the one found in eigK.c. In theory
-    % there could be cancellation error in the smaller eigenvalue. But 
-    % the rotated Lorentz vector is not used internally where this
-    % cancellation error might matter.
-    lab = zeros(2*length(K.r),1);
-    li = 0;
+if ~is_int && isfield(K,'r') && ~isempty(K.r),
+    % Rotated cones are not encountered internally, so only the standard
+    % ordering is implemented, and a simpler formula than the one found
+    % in eigK.c is being used, since cancellation error is not a concern.
+    tmp = 0.5;
     for k = 1:length(K.r)
         kk = K.r(k);
         x1 = xx(xi+1);
         x2 = xx(xi+2);
-        lab(li+1:li+2) = x1+x2+[-1;+1]*norm([x1-x2;2*x(xi+3:xi+kk)]);
+        lab(li+1:li+2) = tmp*(x1+x2+[-1;+1]*norm([x1-x2;2*x(xi+3:xi+kk)]));
         xi = xi + kk;
         li = li + 2;
     end
-    lab_c{end+1} = lab * 0.5;
 end
 if isfield(K,'s') && ~isempty(K.s),
-    lab = zeros(sum(K.s),1);
-    li = 0;
     Ks = K.s;
     Kq = K.s .* K.s;
     nc = length(Ks);
     % When used internally, Hermitian terms are broken apart into real and
-    % imaginary halves, so we need to catch this.
-    if isfield(K,'rsdpN'),
+    % imaginary halves.
+    if is_int,
         nr = K.rsdpN;
     else
         nr = nc;
@@ -104,15 +124,15 @@ if isfield(K,'s') && ~isempty(K.s),
     for i = 1 : nc,
         ki = Ks(i);
         qi = Kq(i);
-        XX = x(xi+1:xi+qi); xi=xi+qi;
+        XX = x(xi+1:xi+qi); 
+        xi = xi + qi;
         if i > nr,
-            XX = XX + 1i*x(xi+1:xi+qi); xi=xi+qi;
+            XX = XX + 1i*x(xi+1:xi+qi); 
+            xi = xi + qi;
         end
         XX = reshape(XX,ki,ki);
         lab(li+1:li+ki) = 0.5 * eig( XX + XX' );
         li = li + ki;
     end
-    lab_c{end+1} = lab;
 end
-lab = vertcat(lab_c{:});
 
