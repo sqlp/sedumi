@@ -176,14 +176,6 @@ function [x,y,info] = sedumi(A,b,c,K,pars)
 %    measures as defined in the Seventh DIMACS Challenge. For more details
 %    see the User Guide.
 %
-%    (13) pars.free   By default, pars.free=1, and all free variables are
-%                     collected into a single second-order cone block. If
-%                     pars.free=0, then they are each split into the
-%                     difference off two nonnegative variables. If
-%                     pars.free=2, then SeDuMi uses the split approach if
-%                     the rest of the problem is an LP, and the
-%                     second-order cone approach otherwise.
-%
 % Bug reports can be submitted at http://sedumi.mcmaster.ca.
 %
 % See also mat, vec, cellK, eyeK, eigK
@@ -548,7 +540,7 @@ while STOP == 0
             break
         end
     elseif (by > 0) && (abs(1+feasratio) < 0.05) && (R.b0*y0 < 0.5)
-        if maxeigK(qreshape(Amul(A,dense,y,1),1,K),K) <= pars.eps * by
+        if maxeigK(Amul(A,dense,y,1),K) <= pars.eps * by
             STOP = 3;                   % Means Farkas solution found !
             break
         end
@@ -624,8 +616,7 @@ clear A
 % Determine infeasibility
 % ------------------------------------------------------------
 pinf = norm(x0*b-Ax);
-z = qreshape(Ay-x0*c,1,K);
-dinf = maxeigK(z,K);
+dinf = maxeigK(Ay-x0*c,K);
 if x0 > 0
     relinf = max(pinf / (1+R.maxb), dinf / (1+R.maxc)) / x0;
     % ------------------------------------------------------------
@@ -633,7 +624,7 @@ if x0 > 0
     % ------------------------------------------------------------
     if relinf > pars.eps
         pdirinf = norm(Ax);
-        ddirinf = maxeigK(qreshape(Ay,1,K),K);
+        ddirinf = maxeigK(Ay,K);
         if cx < 0.0
             reldirinf = pdirinf / (-cx);
         else
