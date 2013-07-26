@@ -52,11 +52,8 @@ end
 Kq = Ks .* Ks;
 nr = K.rsdpN;
 nc = length(Ks);
-N  = sum(Kq) + sum(Kq(nr+1:end));
-ux = zeros(N,1);
-xi = length(x) - N;
+xi = length(x) - sum(Kq) - sum(Kq(nr+1:end));
 eigv = zeros(nc,1);
-OPTS.disp=0;
 for i = 1 : nc,
     ki = Ks(i);
     qi = Kq(i);
@@ -68,8 +65,10 @@ for i = 1 : nc,
     end
     XX = reshape(XX,ki,ki);
     XX = XX + XX';
-    if ki > 500
-        eigv(i) = eigs(XX,1,'SA',OPTS);
+    if ki > 500,
+        if nnz(XX) < 0.1 * numel(XX), XX = sparse(XX); end
+        [v,eigv(i),flag] = eigs(XX,1,'SA',struct('issym',true)); %#ok
+        if flag, eigv(i) = min(eig(XX)); end
     else
         eigv(i) = min(eig(XX));
     end

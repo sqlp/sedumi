@@ -50,45 +50,49 @@ function lab = eigK(x,K)
 % 02110-1301, USA
 %
 
-% The existence of rsdpN is code for 'is this the internal format?'
-is_int = isfield(K,'rsdpN');
-if is_int,
-    N = K.l+2*length(K.q)+sum(K.s);
-else    
+if isfield(K,'rsdpN'),
+    % The internal SeDuMi cone format.
+    is_int = true;
+    nf = 0;
+    nl = K.l;
+    nq = length(K.q);
+    nr = 0;
+    ns = length(K.s);
+    nrsdp = K.rsdpN;
+    N = nl+2*length(K.q)+sum(K.s);
+else
+    % The external SeDuMi cone format.
+    is_int = false;
     N = 0;
-    if isfield(K,'l'), N = N + K.l; end
-    if isfield(K,'q'), N = N + 2*length(K.q); end
-    if isfield(K,'r'), N = N + 2*length(K.r); end
-    if isfield(K,'s'), N = N + sum(K.s); end
+    if isfield(K,'f'), nf = K.f; else nf = 0; end
+    if isfield(K,'l'), nl = K.l; N = N + nl; else nl = 0; end
+    if isfield(K,'q'), nq = length(K.q); N = N + 2 * nq; else nq = 0; end
+    if isfield(K,'r'), nr = length(K.r); N = N + 2 * nr; else nr = 0; end
+    if isfield(K,'s'), ns = length(K.s); N = N + sum(K.s); else ns = 0; end
 end
 li = 0;
-xi = 0;
+xi = nf;
 lab = zeros(N,1);
-if ~is_int && isfield(K,'f'),
-    xi = xi + K.f;
-end
-if isfield(K,'l') && K.l > 0,
-    li(li+1:li+K.l) = x(xi+1:xi+K.l);
-    xi = xi+K.l;
-    li = li+K.l;
-end
-if isfield(K,'q') && ~isempty(K.q),
+li(li+1:li+nl) = x(xi+1:xi+nl);
+xi = xi + nl;
+li = li + nl;
+if nq,
     tmp = sqrt(0.5);
     if is_int,
         % Internal version: all of the x0 values are at the front, and the
         % vectors are stacked in order after that.
         zi = xi;
-        xi = xi + length(K.q);
-        for k = 1:length(K.q)
-            kk = K.q(k) - 1;
-            x0 = x(zi+k);
+        xi = xi + nq;
+        for i = 1:nq,
+            kk = K.q(i) - 1;
+            x0 = x(zi+i);
             lab(li+1:li+2) = tmp*(x0+[-1;+1]*norm(x(xi+1:xi+kk)));
             xi = xi + kk;
             li = li + 2;
         end
     else
-        for k = 1:length(K.q)
-            kk = K.q(k);
+        for i = 1:length(K.q)
+            kk = K.q(i);
             x0 = x(xi+1);
             lab(li+1:li+2) = tmp*(x0+[-1;+1]*norm(x(xi+2:xi+kk)));
             xi = xi + kk;
@@ -96,43 +100,27 @@ if isfield(K,'q') && ~isempty(K.q),
         end
     end
 end
-if ~is_int && isfield(K,'r') && ~isempty(K.r),
-    % Rotated cones are not encountered internally, so only the standard
-    % ordering is implemented, and a simpler formula than the one found
-    % in eigK.c is being used, since cancellation error is not a concern.
-    tmp = 0.5;
-    for k = 1:length(K.r)
-        kk = K.r(k);
-        x1 = xx(xi+1);
-        x2 = xx(xi+2);
-        lab(li+1:li+2) = tmp*(x1+x2+[-1;+1]*norm([x1-x2;2*x(xi+3:xi+kk)]));
-        xi = xi + kk;
-        li = li + 2;
-    end
+for i = 1:nr,
+    % Only the external format need be implemented here
+    ki = K.r(i);
+    x1 = xx(xi+1);
+    x2 = xx(xi+2);
+    lab(li+1:li+2) = 0.5*(x1+x2+[-1;+1]*norm([x1-x2;2*x(xi+3:xi+ki)]));
+    xi = xi + ki;
+    li = li + 2;
 end
-if isfield(K,'s') && ~isempty(K.s),
-    Ks = K.s;
-    Kq = K.s .* K.s;
-    nc = length(Ks);
-    % When used internally, Hermitian terms are broken apart into real and
-    % imaginary halves.
-    if is_int,
-        nr = K.rsdpN;
-    else
-        nr = nc;
-    end
-    for i = 1 : nc,
-        ki = Ks(i);
-        qi = Kq(i);
-        XX = x(xi+1:xi+qi); 
+for i = 1 : ns,
+    ki = K.s(i);
+    qi = ki * ki;
+    XX = x(xi+1:xi+qi); 
+    xi = xi + qi;
+    if i > nrsdp,
+        XX = XX + 1i*x(xi+1:xi+qi); 
         xi = xi + qi;
-        if i > nr,
-            XX = XX + 1i*x(xi+1:xi+qi); 
-            xi = xi + qi;
-        end
-        XX = reshape(XX,ki,ki);
-        lab(li+1:li+ki) = 0.5 * eig( XX + XX' );
-        li = li + ki;
     end
+    XX = reshape(XX,ki,ki);
+    XX = XX + XX';
+    lab(li+1:li+ki) = 0.5*eig( XX );
+    li = li + ki;
 end
 
