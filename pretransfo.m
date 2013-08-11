@@ -331,18 +331,30 @@ if ~isempty(K.q)
     At = qreshape(At,0,K);
     c = qreshape(c,0,K);
 end
+
 % ----------------------------------------
 % Correct A s.t. At has tril-blocks (for PSD),
 % ----------------------------------------
+if ~isempty(K.s)
 At = vectril(At,K);
 c = vectril(c,K);
+end
+
 % ----------------------------------------
-% Create artificial (x0,z0) variable for
-% self-dual model
+% Convert to sparse matrices, which can save a lot of memory. While we're
+% at it, create the artificial (x0,z0) variable for the self-dual model
+% by adding a single nonnegative variable and an extra row to c and At.
 % ----------------------------------------
-c = [0;c];            %does not affect sparse/dense status of c.
-At = [zeros(1,m); At];
-K.l = K.l + 1;    % add (x0,z0)
+K.N = length(c) + 1;
+K.l = K.l + 1;
+K.m = length(b);
+[i,j,s]=find(At);
+At=sparse(i+1,j,s,K.N,K.m);
+[i,j,s]=find(c);
+c=sparse(i+1,j,s,K.N,1);
+[i,j,s]=find(b);
+b=sparse(i,j,s,K.m,1);
+
 % ----------------------------------------
 % Now K has field K.{l,q,s}
 % Make more detailed description of cone K:
@@ -365,13 +377,4 @@ K.mainblks = K.blkstart(cumsum([1 1 length(K.q)]));
 K.qblkstart = K.blkstart(2:2+length(K.q));  % Also include blkend
 K.sblkstart = K.blkstart(2+length(K.q):end);
 K.lq = K.mainblks(end)-1;
-K.N = length(c);
 
-%Correct the sparsity structure of the variables, this can save a lot of
-%memory.
-[i,j,s]=find(At);
-At=sparse(i,j,s,K.N,m);
-[i,j,s]=find(c);
-c=sparse(i,j,s,K.N,1);
-[i,j,s]=find(b);
-b=sparse(i,j,s,m,1);
