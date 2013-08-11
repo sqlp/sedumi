@@ -351,15 +351,22 @@ K.l = K.l + 1;    % add (x0,z0)
 % yields: K.{l,q,s, rsdpN,blkstart,    rLen,hLen, qMaxn,rMaxn,hMaxn}
 % ----------------------------------------
 K.rsdpN = length(K.s) - length(prep.cpx.s);    % # real symmetric PSD vars
-K = statsK(K);
+K.q = K.q(:)';
+K.s = K.s(:)';
+Ksr = K.s(1:K.rsdpN);
+Ksc = K.s(K.rsdpN+1:end);
+K.blkstart = cumsum([K.l+1,length(K.q)+length(K.r),K.q-1,Ksr.^2,2*Ksc.^2]);
+K.rLen = sum(Ksr);
+K.hLen = sum(Ksc);
+K.qMaxn = max([0,K.q]);
+K.rMaxn = max([0,Ksr]);
+K.hMaxn = max([0,Ksc]);
 K.mainblks = K.blkstart(cumsum([1 1 length(K.q)]));
 K.qblkstart = K.blkstart(2:2+length(K.q));  % Also include blkend
 K.sblkstart = K.blkstart(2+length(K.q):end);
 K.lq = K.mainblks(end)-1;
 K.N = length(c);
 
-%Correct the sparsity structure of the variables, this can save a lot of
-%memory.
 %Correct the sparsity structure of the variables, this can save a lot of
 %memory.
 [i,j,s]=find(At);

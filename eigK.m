@@ -69,6 +69,7 @@ else
     if isfield(K,'q'), nq = length(K.q); N = N + 2 * nq; else nq = 0; end
     if isfield(K,'r'), nr = length(K.r); N = N + 2 * nr; else nr = 0; end
     if isfield(K,'s'), ns = length(K.s); N = N + sum(K.s); else ns = 0; end
+    nrsdp = ns;
 end
 li = 0;
 xi = nf;
