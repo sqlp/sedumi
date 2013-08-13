@@ -47,7 +47,7 @@ function [newAt,newb,newc,newK,prepinfo]=preprocessSDP(At,b,c,K)
 %where do the sdp blocks start?
 blockstart = 1+ K.l + K.f + sum(K.q) + [0;reshape(cumsum((K.s).^2),length(K.s),1)];
 %the sparsity pattern of the dual slack variable s
-sparsepattern = c - At * sparse(randn(length(b), 1));
+sparsepattern = c | any(At,2);
 
 newAt = [];
 newc = [];
