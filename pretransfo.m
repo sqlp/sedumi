@@ -78,6 +78,18 @@ else
         error('K.s should contain only positive integers')
     end
 end
+% As an alternative to the 'scomplex' flag, I've added a 'z' parameter
+% containing a list of Hermitian semidefinite cone sizes. For now, this
+% is just translated to 'scomplex' for you. In the future, we may use
+% this internally *instead* of scomplex or rsdpN.
+if ~isfield(K,'z') || ~nnz(K.z)
+    K.z = zeros(1,0);
+else
+    K.z = K.z(:)';
+    if any(K.z ~= floor(K.z)) || any(K.z<1) || ~isreal(K.z)
+        error('K.z should contain only positive integers')
+    end
+end
 
 N_f    = K.f;
 N_l    = K.l;
@@ -89,10 +101,14 @@ N_r    = sum(K.r);
 N_qr   = N_q + N_r;
 L_qr   = L_q + L_r;
 L_s    = length(K.s);
+L_z    = length(K.z);
+L_sz   = L_s + L_z;
 N_s    = sum((K.s).^2);
-L_qrs  = L_qr + L_s;
+N_z    = sum((K.z).^2);
+N_sz   = N_s + N_z;
+L_qrsz = L_qr + L_sz;
 N_flqr = N_fl + N_qr;
-N      = N_flqr + N_s;
+N      = N_flqr + N_sz;
 
 if ~isfield(K,'ycomplex') || isempty(K.ycomplex)
     K.ycomplex = zeros(1,0);
@@ -126,6 +142,15 @@ else
     elseif any(K.scomplex>L_s)
         error('Elements of K.xcomplex are out of range');
     end
+end
+if L_z,
+    K.s = [ K.s, K.z ];
+    K.scomplex = [ K.scomplex, L_s + 1 : L_sz ];
+    K.z = zeros(1,0);
+    L_s = L_s + L_z;
+    N_s = N_s + N_z;
+    L_z = 0;
+    N_z = 0;
 end
 
 % -------------------------------------------------------------------------
@@ -292,6 +317,7 @@ else
     scplx = false(1,L_s);
     scplx(K.scomplex&~sdiag) = true;
     sreal = ~scplx & ~sdiag;
+    K.rsdpN = nnz(sreal);
     K.cdim = length(K.xcomplex) + sum(K.s(scplx).^2);
 end
 
@@ -312,7 +338,7 @@ newQ = zeros(1,0);
 ii = {}; jj = {}; vv = {};
 
 % Split free variables into the difference of nonnegatives
-if ~isfield( pars, 'free' ) || pars.free == 2 && L_qrs,
+if ~isfield( pars, 'free' ) || pars.free == 2 && L_qrsz,
     pars.free = 1;
 end
 if N_f && ~pars.free,
@@ -407,55 +433,56 @@ if N_r,
     nb_off = nb_off + N_r - L_r;
 end
 
-% For diagonal SDPs, use the space reserved above to convert them to
-% nonnegative variablees. Otherwise, replace the coefficients with
-% tril(X) + tril(X',-1)
+% Replace non-diagonal real SDP coefficients with tril(X) + tril(X',-1).
+% This cuts the number of nonzeros approximately in half.
 if K.rsdpN,
-    ioff = nb_off;
-    joff = N_fl + N_qr;
-    for k = 1 : L_s,
-        kk = K.s(k);
-        kq = kk * kk;
-        if sreal(k),
-            cc = 0 : kk - 1; rr = cc';
-            is = bsxfun(@max,rr,cc) + bsxfun(@min,rr,cc) * kk + 1;
-            is = is(:)';
-            ii{end+1} = ioff + is; %#ok
-            jj{end+1} = joff + 1 : joff + kq; %#ok
-            vv{end+1} = ones(1,kq); %#ok
-        end
-        ioff = ioff + kq;
-        joff = joff + kq;
-        if k > K.rsdpN,
-            ioff = ioff + kq;
-            joff = joff + kq;
-        end
-    end
+    dsize = K.s(sreal);
+    sdpL  = sum(dsize.^2);
+    jstrt = cumsum([N_flqr+1,K.s(1:end-1).^2]);
+    jstrt = jstrt(sreal);
+    istrt = cumsum([1,dsize(1:end-1).^2]);
+    dblks = cumsum(full(sparse(1,istrt,1,1,sdpL)));
+    istrt = istrt + nb_off;
+    dsize = dsize(dblks);
+    istrt = istrt(dblks);
+    jndxs = ( nb_off + 1 : nb_off + sdpL ) - istrt;
+    cols  = floor(jndxs ./ dsize);
+    rows  = jndxs - dsize .* cols;
+    ii{end+1} = max(rows,cols) + min(rows,cols) .* dsize + istrt;
+    jj{end+1} = jndxs + jstrt(dblks);
+    vv{end+1} = ones(1,sdpL);
+    nb_off = nb_off + sdpL;
+    clear dsize jstrt istrt dblks jndxs rows cols
 end
 
-% Replace the Hermitian semidefinite coefficients with tril(X)+tril(X',-1)
+% Replace Hermitian SDP coefficients with tril(X) + tril(X',-1). This one's
+% a bit trickier because we have the real and complex values interleaved, 
+% and the imaginary values along the diagonal are zero.
 if K.rsdpN < length(K.s),
-    joff = N_fl + N_qr;
-    for k = 1 : L_s,
-        kk = K.s(k);
-        kq = kk * kk;
-        if scplx(k),
-            cc = 0 : kk - 1; rr = cc';
-            is = bsxfun(@max,rr,cc) + bsxfun(@min,rr,cc) * kk + 1;
-            js = joff + 1 : joff + kq;
-            is = is(:)';
-            ii{end+1} = ioff + is; %#ok
-            jj{end+1} = joff + 1 : joff + kq; %#ok
-            vv{end+1} = ones(1,kq); %#ok
-            vs = -1j * sign(bsxfun(@minus,rr,cc));
-            tt = vs ~= 0;
-            ii{end+1} = kq + is(tt); %#ok
-            jj{end+1} = kq + js(tt); %#ok
-            vv{end+1} = vs(tt); %#ok
-        end
-        ioff = ioff + kq;
-        joff = joff + kq;
-    end
+    dsize = K.s(scplx);
+    jsize = dsize .^ 2;
+    sdpL  = 2 * sum(jsize);
+    jstrt = cumsum([N_flqr+1,K.s(1:end-1).^2]);
+    jstrt = jstrt(scplx);
+    bstrt = cumsum([1,2*jsize(1:end-1).^2]);
+    dblks = cumsum(full(sparse(1,bstrt,1,1,sdpL)));
+    istrt = bstrt + nb_off;
+    dsize = dsize(dblks);
+    istrt = istrt(dblks);
+    bndxs = ( nb_off + 1 : nb_off + sdpL ) - istrt;
+    dsize = dsize(dblks);
+    cols  = floor( bndxs ./ dsize );
+    rows  = bndxs - dsize .* cols;
+    imgv  = cols >= dsize;
+    cols  = cols - imgv .* dsize;
+    indxs = max(rows,cols) + min(rows,cols) .* dsize + imgv .* jsize(dblks) + istrt;
+    vals  = ( 1 - 2 * ( cols > rows ) ) .* ( 1 - ( 1 + 1j ) .* imgv );
+    keep  = ~imgv | ( rows ~= cols );
+    jndxs = rows + cols .* dsize + jstrt;
+    ii{end+1} = indxs(keep);
+    jj{end+1} = jndxs(keep);
+    vv{end+1} = vals(keep);
+    clear dsize jsize jstrt bstrt istrt bndxs rows cols vals imgv keep
 end
 
 % Update free, nonnegative, and Lorentz variable counts
