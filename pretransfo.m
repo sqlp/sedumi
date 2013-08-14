@@ -8,7 +8,8 @@ function [At,b,c,K,prep,origcoeff] = pretransfo(At,b,c,K,pars)
 %
 % See also sedumi
 
-% Significant rewrite for SeDuMi 1.3 by Michael Grant.
+% Nearly complete rewrite for SeDumI 1.4
+% Copyright (c) 2013 Michael C. Grant
 %
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
 % Copyright (C) 2005 McMaster University, Hamilton, CANADA  (since 1.1)
@@ -55,84 +56,81 @@ elseif K.l ~= floor(K.l) || K.l < 0 || ~isreal(K.l)
 end
 if ~isfield(K,'q') || ~nnz(K.q)
     K.q = zeros(1,0);
-    L_q = 0;
-    N_q = 0;
 else
     K.q = K.q(:)';
-    L_q = length(K.q);
-    N_q = sum(K.q);
     if any(K.q ~= floor(K.q)) || any(K.q<2) || ~isreal(K.q)
         error('K.q should contain only integers bigger than 1')
     end
 end
 if ~isfield(K,'r') || ~nnz(K.r)
     K.r = zeros(1,0);
-    L_r = 0;
-    N_r = sum(K.r);
 else
     K.r = K.r(:)';
-    L_r = length(K.r);
-    N_r = sum(K.r);
     if any(K.r ~= floor(K.r)) || any(K.r<3) || ~isreal(K.r)
         error('K.r should contain only integers bigger than 2')
     end
 end
 if ~isfield(K,'s') || ~nnz(K.s)
     K.s = zeros(1,0);
-    L_s = 0;
-    N_s = 0;
 else
     K.s = K.s(:)';
-    L_s = length(K.s);
-    N_s = sum(K.s.^2);
     if any(K.s ~= floor(K.s)) || any(K.s<1) || ~isreal(K.s)
         error('K.s should contain only positive integers')
     end
 end
-N_fl = K.f + K.l;
-N_qr = N_q + N_r;
-L_qr = L_q + L_r;
+
+N_f    = K.f;
+N_l    = K.l;
+N_fl   = N_f + N_l;
+L_q    = length(K.q);
+N_q    = sum(K.q);
+L_r    = length(K.r);
+N_r    = sum(K.r);
+N_qr   = N_q + N_r;
+L_qr   = L_q + L_r;
+L_s    = length(K.s);
+N_s    = sum((K.s).^2);
+L_qrs  = L_qr + L_s;
+N_flqr = N_fl + N_qr;
+N      = N_flqr + N_s;
+
 if ~isfield(K,'ycomplex') || isempty(K.ycomplex)
     K.ycomplex = zeros(1,0);
 else
     K.ycomplex = sort(K.ycomplex(:))';
+    K.ycomplex(find(~diff(K.ycomplex))+1) = [];
     if any(K.ycomplex ~= floor(K.ycomplex)) || any(K.ycomplex<1)
-        error('K.ycomplex should be a list containing only positive integers');
+        error('K.ycomplex should contain only positive integers');
     elseif any(K.ycomplex > numel(b))
         error('Elements of K.ycomplex are out of range');
-    elseif ~all(diff(K.ycomplex))
-        K.ycomplex(find(~diff(K.ycomplex))+1) = [];
     end
 end
 if ~isfield(K,'xcomplex') || isempty(K.xcomplex)
     K.xcomplex = zeros(1,0);
 else
     K.xcomplex = sort(K.xcomplex(:))';
+    K.xcomplex(find(~diff(K.xcomplex))+1) = [];
     if any(K.xcomplex ~= floor(K.xcomplex)) || any(K.xcomplex<1)
-        error('K.xcomplex should be a list containing only positive integers');
-    elseif any(K.xcomplex > N_fl + N_qr)
+        error('K.xcomplex should contain only positive integers');
+    elseif any(K.xcomplex>N_flqr)
         error('Elements of K.xcomplex are out of range');
-    elseif ~all(diff(K.xcomplex))
-        K.xcomplex(find(~diff(K.xcomplex))+1) = [];
     end
 end
 if ~isfield(K,'scomplex') || isempty(K.scomplex)
     K.scomplex = zeros(1,0);
 else
     K.scomplex = sort(K.scomplex(:))';
+    K.scomplex(find(~diff(K.scomplex))+1) = [];
     if any(K.scomplex~=floor(K.scomplex)) || any(K.scomplex<1)
-        error('K.scomplex should be a list containing only positive integers');
+        error('K.scomplex should contain only positive integers');
     elseif any(K.scomplex>L_s)
         error('Elements of K.xcomplex are out of range');
-    elseif ~all(diff(K.scomplex))
-        K.scomplex(find(~diff(K.scomplex))+1) = [];
     end
 end
-N = N_fl + N_qr + N_s;
 
 % -------------------------------------------------------------------------
 % Verify the size and validity of At, b, and c
-% N = # variables, m = # constraints
+% N = # variables
 % -------------------------------------------------------------------------
 
 % SeDuMi assumes that if At is not consistent with K but At' is, that the
@@ -141,6 +139,7 @@ N = N_fl + N_qr + N_s;
 % of SeDuMi would not have allowed this, instead rejecting the case where
 % m >= N; however, with complex variables, the situation is not quite as
 % clear, and there may technically be cases where m >= N is acceptable.
+
 if ndims(At) > 2 %#ok
     error('A must be a matrix');
 elseif nnz(isnan(At)) || nnz(isinf(At)),
@@ -187,22 +186,30 @@ end
 % -------------------------------------------------------------------------
 % Flag diagonal SDP blocks for removal
 % -------------------------------------------------------------------------
-if ~isfield(pars,'sdp')
-    pars.sdp = 1;    % Enable/disable SDP preprocessing
-end
-if pars.sdp && L_s,
-    % Some serious MATLAB trickery here if I do say so myself. Here's what
-    % we are doing. "spattern" contains the indices of the nonzero elements
-    % of the dual SDP variables. These are global indices over all SDPs, so
-    % we use "sblk" to tell us which SDP the index belongs to. The "rem"
-    % statement determines whether each element is off-diagonal. If even
-    % one off-digonal element is detected for SDP #k, then sdiag(k)=false.
+
+% There is some serious MATLAB trickery here (if I do say so myself) that
+% merits explanation. "spattern" contains the indices of symbolically 
+% nonzero elements of the dual variable z = c - At * y. This is a single
+% vector across all LMI constraints, so "sblk" tells us which indices 
+% belong to which constraints. The "rem" statement is what determines if
+% a particular element is off-diagonal. If there is even one off-diagonal
+% element in an SDP, then its corresponding element of "sdiag" is false.
+%
+% This new version of the analysis replaces the old preprocessSDP(), and
+% seems inexpensive enough to apply to all LMIs regardless of size/count.
+% The previous version was applied more sparingly.
+%
+% In theory one could do a more complex analysis of the block structure of
+% an LMI, potentially breaking a larger into smaller ones. But this would
+% likely be significantly more expensive.
+
+if L_s && ( ~isfield(pars,'sdp') || pars.sdp ),
     ssiz        = (K.s).^2;
     strt        = cumsum([1,ssiz(1:end-1)]);
     sblk        = zeros(1,N_s);
     sblk(strt)  = 1;
     sblk        = cumsum(sblk);
-    spattern    = find(c(N_fl+N_qr+1:end)|any(At(N_fl+N_qr+1:end,:),2))';
+    spattern    = find(c(N_flqr+1:N)|any(At(N_flqr+1:N,:),2))';
     sblk        = sblk(spattern);
     sblk        = sblk(rem(spattern-strt(sblk),K.s(sblk)+1)~=0);
     sdiag       = true(1,L_s);
@@ -212,10 +219,6 @@ else
     % the nonnegative variable block. It just doesn't make sense to deploy
     % all of that SDP machinery for nonnegative variables.
     sdiag = K.s == 1;
-end
-if any(sdiag),
-    K.scomplex(sdiag(K.scomplex)) = [];
-    prep.sdiag = K.s(sdiag);
 end
 
 % -------------------------------------------------------------------------
@@ -241,12 +244,15 @@ end
 
 % This code replaces whichcpx.c in its entirety. It actually fixes a bug in
 % rotated Lorentz cone handling that was probably never exercised.
-if isempty(K.xcomplex),
+if isempty(K.xcomplex) && isempty(K.scomplex),
     K.fcplx = zeros(1,0);
     K.qcplx = zeros(1,0);
     K.rcplx = zeros(1,0);
-    K.qc = zeros(1,L_q);
-    K.rc = zeros(1,L_r);
+    scplx   = false(1,L_s);
+    sreal   = ~sdiag;
+    K.rsdpN = L_s;
+    N_fc = 0;
+    K.cdim = 0;
 else
     xc = K.xcomplex;
     tt = xc <= N_fl;
@@ -257,39 +263,37 @@ else
     xc = xc(~tt) - N_q;
     tt = xc <= N_r;
     K.rcplx = xc(tt);
-    if isempty(K.qcplx),
-        K.qc = zeros(1,L_q);
-    else
+    if ~isempty(K.qcplx),
         ndxs = cumsum([1,K.q(1:end-1)]);
         t2 = any(bsxfun(@eq,K.qcplx,ndxs'),1);
         K.fcplx = [ K.fcplx, K.qcplx(t2) + N_fl ];
         K.qcplx(t2) = [];
         t2 = sum(bsxfun(@gt,K.qcplx,ndxs'),1);
-        K.qc = full(sparse(1,t2,1,1,L_q));
+        K.q = K.q + full(sparse(1,t2,1,1,L_q));
+        K.qcplx = K.qcplx + (1:length(K.qcplx));
+        N_q = N_q + length(K.qcplx);
     end
     if ~isempty(K.rcplx),
-        K.rc = zeros(1,L_r);
-    else
         ndxs = cumsum([1,K.r(1:end-1)]);
         t2 = any(bsxfun(@eq,K.rcplx,[ndxs,ndxs+1]'),1);
         K.fcplx = [ K.fcplx, K.rcplx(t2) + N_fl + N_q ];
         K.rcplx(t2) = [];
         t2 = sum(bsxfun(@gt,K.rcplx,ndxs'),1);
-        K.rc = full(sparse(1,t2,1,1,L_r));
+        K.r = K.r + full(sparse(1,t2,1,1,L_r));
+        % This 2*t2 offset is required because QR makes two accesses
+        % each of the first two elements of a rotated Lorentz cone.
+        K.rcplx = K.rcplx + (1:length(K.rcplx)) + 2 * t2;
+        N_r = N_r + length(K.rcplx);
     end
+    N_fc = length(K.fcplx);
+    N_f  = N_f + N_fc;
+    N_fl = N_f + N_l;
+    N_qr = N_q + N_r;
+    scplx = false(1,L_s);
+    scplx(K.scomplex&~sdiag) = true;
+    sreal = ~scplx & ~sdiag;
+    K.cdim = length(K.xcomplex) + sum(K.s(scplx).^2);
 end
-N_isdp = sum(K.s(K.scomplex).^2);
-K.cdim = length(K.xcomplex) + N_isdp;
-K.rsdpN = length(K.s) - length(K.scomplex);
-K.f = K.f;
-N_fc = length(K.fcplx);
-N_f  = K.f + N_fc;
-N_qr = N_q;
-N_qc = length(K.qcplx);
-N_q  = N_qr + N_qc;
-N_rr = N_r;
-N_rc = length(K.rcplx);
-N_r  = N_rr + N_rc;
 
 % -------------------------------------------------------------------------
 % We have significantly rewritten this section of the code. This section
@@ -303,28 +307,22 @@ N_r  = N_rr + N_rc;
 % This code replaces the rotlorenz, qreshape, and vectril MEX files.
 % -------------------------------------------------------------------------
 
-% This reserves space for diagonal SDPs
-newL = sum(K.s(sdiag)); 
-newQ = [];
+newL = 0;
+newQ = zeros(1,0);
 ii = {}; jj = {}; vv = {};
 
-% Translate free variables into split variables or a Lorentz cone
-if N_f,
-    if ~isfield( pars, 'free' ) || pars.free == 2 && ( L_q + L_r + L_s ) || pars.free == 1,
-        ii{end+1} = K.l + L_qr + 2 : K.l + L_qr + 1 + N_f;
-        jj{end+1} = [ 1 : K.f, K.fcplx ];
-        vv{end+1} = [ ones(1,K.f), -1j * ones(1,N_fc) ];
-        newQ = N_f + 1;
-        prep.freeQ = N_f;
-    else
-        ii{end+1} = 1 : 2 * N_f;
-        jt = [ [ 1 : N_f ; 1 : N_f ], [ K.fcplx, K.fcplx ] ];
-        jj{end+1} = jt(:)';
-        vt = [ [ ones(1,K.f) ; -ones(1,K.f) ], [ -1j * ones(1,N_fc), 1j * ones(1,N_fc) ] ];
-        vv{end+1} = vt(:)';
-        newL = newL + 2 * N_f;
-        prep.freeL = N_f;
-    end
+% Split free variables into the difference of nonnegatives
+if ~isfield( pars, 'free' ) || pars.free == 2 && L_qrs,
+    pars.free = 1;
+end
+if N_f && ~pars.free,
+    jt = [ 1 : K.f, K.fcplx ; 1 : K.f, K.fcplx ];
+    vt = [ ones(1,K.f), -1j*ones(1,N_fc) ; -ones(1,K.f), 1j*ones(1,N_fc) ];
+    ii{end+1} = 1 : 2 * N_f;
+    jj{end+1} = jt(:)';
+    vv{end+1} = vt(:)';
+    newL = 2 * N_f;
+    prep.freeL = N_f;
 end
 
 % Copy nonnegative variables without change
@@ -335,37 +333,58 @@ if K.l,
     newL = newL + K.l;
 end
 
+% Convert diagonal SDPs to nonnegative variables
+if any(sdiag),
+    dsize = K.s(sdiag);
+    sdpL = sum(dsize);
+    prep.sdiag = dsize;
+    jstrt = cumsum([N_flqr+1,K.s(1:end-1).^2]);
+    jstrt = jstrt(sdiag);
+    istrt = cumsum([1,dsize(1:end-1)]);
+    dsize = dsize + 1;
+    dblks = cumsum(full(sparse(1,istrt,1,1,sdpL)));
+    ii{end+1} = newL + 1 : newL + sdpL;
+    jj{end+1} = jstrt(dblks) + dsize(dblks) .* ( ( 1 : sdpL ) - istrt(dblks) );
+    vv{end+1} = ones(1,sdpL);
+    newL = newL + sdpL;
+end
+
+% Stuff free variables into a Lorentz cone
+tr_off = newL;
+nb_off = newL + L_qr;
+if N_f && pars.free,
+    tr_off = tr_off + 1;
+    nb_off = nb_off + 1;
+    it{end+1} = nb_off + 1 : nb_off + N_f; %#ok
+    jt{end+1} = [ 1 : K.f, K.fcplx ]; %#ok
+    vt{end+1} = [ ones(1,K.f), -1j*ones(1,N_fc) ]; %#ok
+    nb_off = nb_off + K.f;
+    newQ = N_f + 1;
+end
+
 % Rearrange Lorentz cones to trace block + norm-bound blocks
-tr_off = newL + length(newQ);
-nb_off = newL + L_qr + sum(newQ);
 if N_q,
-    ndxs = cumsum([1,K.q(1:end-1)+K.qc(1:end-1)]);
+    ndxs = cumsum([1,K.q(1:end-1)]);
     it        = zeros(1,N_q);
     it(ndxs)  = tr_off + 1 : tr_off + L_q;
     it(it==0) = nb_off + 1 : nb_off + ( N_q - L_q );
-    ii{end+1} = it(:)';
-    if any(K.qc),
-        ndxc = K.qcplx + ( 1 : length(K.qcplx) );
-        jt = [ K.f + K.l, ones(1,N_q-1) ];
-        jt(ndxc) = 0;
-        jt = cumsum(jt);
-    else
-        jt = K.f + K.l + 1 : K.f + K.l + N_q;
-        ndxc = [];
-    end
-    jj{end+1} = jt;
+    jt = K.f + K.l + 1 : K.f + K.l + N_q;
     vt = ones(1,N_q);
-    vt(ndxc)  = -1j;
+    if ~isempty(K.qcplx),
+        jt = jt - cumsum(full(sparse(1,K.qcplx,1,1,N_q)));
+        vt(K.qcplx) = -1j;
+    end
+    ii{end+1} = it(:)';
+    jj{end+1} = jt;
     vv{end+1} = vt;
     tr_off    = tr_off + L_q;
     nb_off    = nb_off + N_q - L_q;
-    newQ      = [ newQ, K.q + K.qc ];
 end
 
 % Transform rotated Lorentz cones to standard Lorentz cones, and rearrange
 % to trace block + norm-bound blocks.
 if N_r,
-    ndxr = cumsum([1,K.r(1:end-1)+K.rc(1:end-1)]);
+    ndxr = cumsum([1,K.r(1:end-1)]);
     ndxp = ndxr + 2*(0:L_r-1);
     it         = zeros(1,N_r+2*L_r);
     it(ndxp)   = tr_off + 1 : tr_off + L_r;
@@ -373,24 +392,19 @@ if N_r,
     it(ndxp+2) = it(ndxp);
     it(it==0)  = nb_off + 1 : nb_off + ( N_r - L_r );
     it(ndxp+1) = it(ndxp+3);
-    ii{end+1}  = it;
-    jt = [ K.f + K.l + N_qr, ones(1,N_r+2*L_r-1) ];
+    jt = [ K.f + K.l + N_qr + 1, ones(1,N_r+2*L_r-1) ];
     jt([ndxp+1,ndxp+3]) = 0;
-    if any(K.rc),
-        ndxc = K.rcplx + ( 1 : length(K.rcplx) );
-        ndxc = ndxc + 2 * sum(bsxfun(@gt,ndxc,ndxr(:)));
-        jt(ndxc) = 0;
-    else
-        ndxc = [];
-    end
-    jj{end+1} = cumsum(jt);
     vt = ones(1,N_r+2*L_r);
     vt([ndxp,ndxp+1,ndxp+2]) = sqrt(0.5);
     vt(ndxp+3) = -sqrt(0.5);
-    vt(ndxc) = -1j;
+    if ~isempty(K.rcplx),
+        jt(K.rcplx) = 0;
+        vt(K.rcplx) = -1j;
+    end
+    ii{end+1} = it;
+    jj{end+1} = cumsum(jt);
     vv{end+1} = vt;
     nb_off = nb_off + N_r - L_r;
-    newQ = [ newQ, K.r + K.rc ];
 end
 
 % For diagonal SDPs, use the space reserved above to convert them to
@@ -399,16 +413,10 @@ end
 if K.rsdpN,
     ioff = nb_off;
     joff = N_fl + N_qr;
-    loff = 0;
-    for k = 1 : L_s + L_z,
+    for k = 1 : L_s,
         kk = K.s(k);
         kq = kk * kk;
-        if sdiag(k),
-            ii{end+1} = loff + 1 : loff + kk; %#ok
-            jj{end+1} = joff + 1 : kk + 1 : joff + kq; %#ok
-            vv{end+1} = ones(1,kk); %#ok
-            loff = loff + kk;
-        elseif ~K.scomplex(k),
+        if sreal(k),
             cc = 0 : kk - 1; rr = cc';
             is = bsxfun(@max,rr,cc) + bsxfun(@min,rr,cc) * kk + 1;
             is = is(:)';
@@ -428,10 +436,10 @@ end
 % Replace the Hermitian semidefinite coefficients with tril(X)+tril(X',-1)
 if K.rsdpN < length(K.s),
     joff = N_fl + N_qr;
-    for k = 1 : L_s + L_z,
+    for k = 1 : L_s,
         kk = K.s(k);
         kq = kk * kk;
-        if K.scomplex(k),
+        if scplx(k),
             cc = 0 : kk - 1; rr = cc';
             is = bsxfun(@max,rr,cc) + bsxfun(@min,rr,cc) * kk + 1;
             js = joff + 1 : joff + kq;
@@ -453,9 +461,10 @@ end
 % Update free, nonnegative, and Lorentz variable counts
 K.f = 0;
 K.l = newL;
-K.q = newQ;
-K.s = [ K.s(~K.scomplex&~sdiag), K.s(K.scomplex&~sdiag) ];
-K.rsdpN = nnz(~K.scomplex&~sdiag);
+K.q = [ newQ, K.q, K.r ];
+K.r = zeros(0,1);
+K.s = [ K.s(:,~scplx&~sdiag), K.s(scplx&~sdiag) ];
+K.rsdpN = nnz(~scplx&~sdiag);
 K.N = K.l + sum(K.q) + sum(K.s(1:K.rsdpN).^2)+2*sum(K.s(K.rsdpN+1:end).^2);
 
 % Create the artificial (x0,z0) variable for the self-dual model by
