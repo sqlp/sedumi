@@ -40,7 +40,7 @@ function [x,y,K] = posttransfo(x,y,prep,K,pars)
 % This routine is significantly simpler than before, because most of the
 % heavy lifting has been accomplished by the QR matrix.
 K.l = K.l - 1;
-x = prep.QR' * x;
+x = (x'*prep.QR)';
 if ~isempty(K.ycomplex),
     ylen = length(y) - length(K.ycomplex);
     y = y(1:ylen) + 1j * sparse(K.ycomplex,1,y(ylen+1:length(y)),ylen,1);
