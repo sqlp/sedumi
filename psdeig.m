@@ -69,7 +69,7 @@ for i = 1 : nc,
     XX = XX + XX';
     try
         if needv,
-            [XX,DD] = eig(XX);
+            [QQ,DD] = eig(XX);
             DD = diag(DD);
         else
             DD = eig(XX);
@@ -77,16 +77,16 @@ for i = 1 : nc,
     catch
         % If eig() fails to converge, fall back onto svd(). This costs
         % more, so we don't want to use it every time.
-        [XX,DD,VV] = svd(XX);
-        DD = diag(DD).*sign(real(sum(conj(XX).*VV)'));
+        [QQ,DD,VV] = svd(XX);
+        DD = diag(DD).*sign(real(sum(conj(QQ).*VV)'));
     end
     lab(ei+1:ei+ki) = 0.5*DD;
     ei = ei + ki;
     if needv,
-        q(vi+1:vi+qi) = real(XX);
+        q(vi+1:vi+qi) = real(QQ);
         vi = vi + qi;
         if i > nr,
-            q(vi+1:vi+qi) = imag(XX);
+            q(vi+1:vi+qi) = imag(QQ);
             vi = vi + qi;
         end
     end
