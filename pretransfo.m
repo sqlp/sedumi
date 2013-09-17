@@ -149,8 +149,8 @@ if L_z,
     K.z = zeros(1,0);
     L_s = L_s + L_z;
     N_s = N_s + N_z;
-    L_z = 0;
-    N_z = 0;
+    L_z = 0; %#ok
+    N_z = 0; %#ok
 end
 
 % -------------------------------------------------------------------------
@@ -312,7 +312,7 @@ else
     end
     N_fc = length(K.fcplx);
     N_f  = N_f + N_fc;
-    N_fl = N_f + N_l;
+    N_fl = N_f + N_l; %#ok
     N_qr = N_q + N_r;
     scplx = false(1,L_s);
     scplx(K.scomplex&~sdiag) = true;
@@ -381,9 +381,9 @@ nb_off = newL + L_qr;
 if N_f && pars.free,
     tr_off = tr_off + 1;
     nb_off = nb_off + 1;
-    it{end+1} = nb_off + 1 : nb_off + N_f; %#ok
-    jt{end+1} = [ 1 : K.f, K.fcplx ]; %#ok
-    vt{end+1} = [ ones(1,K.f), -1j*ones(1,N_fc) ]; %#ok
+    ii{end+1} = nb_off + 1 : nb_off + N_f;
+    jj{end+1} = [ 1 : K.f, K.fcplx ];
+    vv{end+1} = [ ones(1,K.f), -1j*ones(1,N_fc) ];
     nb_off = nb_off + K.f;
     newQ = N_f + 1;
 end
