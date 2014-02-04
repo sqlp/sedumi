@@ -234,7 +234,7 @@ if L_s && ( ~isfield(pars,'sdp') || pars.sdp ),
     sblk        = zeros(1,N_s);
     sblk(strt)  = 1;
     sblk        = cumsum(sblk);
-    spattern    = find(c(N_flqr+1:N)|any(At(N_flqr+1:N,:),2))';
+    spattern    = find(c(N_flqr+1:N)~=0|any(At(N_flqr+1:N,:),2))';
     sblk        = sblk(spattern);
     sblk        = sblk(rem(spattern-strt(sblk),K.s(sblk)+1)~=0);
     sdiag       = true(1,L_s);
@@ -390,7 +390,7 @@ end
 
 % Rearrange Lorentz cones to trace block + norm-bound blocks
 if N_q,
-    ndxs = cumsum([1,K.q(1:end-1)]);
+    ndxs      = cumsum([1,K.q(1:end-1)]);
     it        = zeros(1,N_q);
     it(ndxs)  = tr_off + 1 : tr_off + L_q;
     it(it==0) = nb_off + 1 : nb_off + ( N_q - L_q );
@@ -410,15 +410,15 @@ end
 % Transform rotated Lorentz cones to standard Lorentz cones, and rearrange
 % to trace block + norm-bound blocks.
 if N_r,
-    ndxr = cumsum([1,K.r(1:end-1)]);
-    ndxp = ndxr + 2*(0:L_r-1);
+    ndxr       = cumsum([1,K.r(1:end-1)]);
+    ndxp       = ndxr + 2*(0:L_r-1); 
     it         = zeros(1,N_r+2*L_r);
     it(ndxp)   = tr_off + 1 : tr_off + L_r;
     it(ndxp+1) = -1;
     it(ndxp+2) = it(ndxp);
     it(it==0)  = nb_off + 1 : nb_off + ( N_r - L_r );
     it(ndxp+1) = it(ndxp+3);
-    jt = [ K.f + K.l + N_qr + 1, ones(1,N_r+2*L_r-1) ];
+    jt = [ K.f + K.l + N_q + 1, ones(1,N_r+2*L_r-1) ];
     jt([ndxp+1,ndxp+3]) = 0;
     vt = ones(1,N_r+2*L_r);
     vt([ndxp,ndxp+1,ndxp+2]) = sqrt(0.5);
@@ -464,13 +464,12 @@ if K.rsdpN < length(K.s),
     sdpL  = 2 * sum(jsize);
     jstrt = cumsum([N_flqr+1,K.s(1:end-1).^2]);
     jstrt = jstrt(scplx);
-    bstrt = cumsum([1,2*jsize(1:end-1).^2]);
+    bstrt = cumsum([1,2*jsize(1:end-1)]);
     dblks = cumsum(full(sparse(1,bstrt,1,1,sdpL)));
     istrt = bstrt + nb_off;
     dsize = dsize(dblks);
     istrt = istrt(dblks);
     bndxs = ( nb_off + 1 : nb_off + sdpL ) - istrt;
-    dsize = dsize(dblks);
     cols  = floor( bndxs ./ dsize );
     rows  = bndxs - dsize .* cols;
     imgv  = cols >= dsize;
@@ -478,7 +477,7 @@ if K.rsdpN < length(K.s),
     indxs = max(rows,cols) + min(rows,cols) .* dsize + imgv .* jsize(dblks) + istrt;
     vals  = ( 1 - 2 * ( cols > rows ) ) .* ( 1 - ( 1 + 1j ) .* imgv );
     keep  = ~imgv | ( rows ~= cols );
-    jndxs = rows + cols .* dsize + jstrt;
+    jndxs = rows + cols .* dsize + jstrt(dblks);
     ii{end+1} = indxs(keep);
     jj{end+1} = jndxs(keep);
     vv{end+1} = vals(keep);
