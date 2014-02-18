@@ -533,7 +533,7 @@ while STOP == 0
     % try to guess optimal solution:
     % ----------------------------------------
     if lponly && (rate < 0.05)
-        [xsol,ysol] = optstep(A,b,c, y0,y,d,v,dxmdz, ...
+        [xsol,ysol] = optstep(A,A1,b,c, y0,y,d,v,dxmdz, ...
             K,L,symLden,dense, Ablkjc,Aord,ADA_sedumi_,DAt, feasratio, R,pars);
         if ~isempty(xsol)
             STOP = 2;                   % Means that we guessed right !!

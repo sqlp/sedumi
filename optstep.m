@@ -1,4 +1,4 @@
-function [x,y] = optstep(A,b,c, y0,y,d,v,dxmdz, K,L,symLden,...
+function [x,y] = optstep(A,A1,b,c, y0,y,d,v,dxmdz, K,L,symLden,...
     dense,Ablkjc,Aord,ADA,DAt, feasratio, R,pars)
 % [x,y] = optstep(A,b,c, y0,y,d,v,dxmdz, K,L,symLden,dense,Ablkjc,Aord,...
 %                 ADA,DAt, feasratio, R,pars)
@@ -63,7 +63,7 @@ if abs(abs(feasratio)-1) < 0.1
     DAt = getDAtm(A,Ablkjc,dense,DAt.denq,d,K);
     if sum(K.s)==0
         %ADA is global already
-        absd=getada(A,K,d,DAt);
+        absd=getada(A1,K,d,DAt,pars);
     else
         ADA = getada1(ADA, A, Ablkjc(:,3), Aord.lqperm, d, K.qblkstart);
         ADA = getada2(ADA, DAt, Aord, K);
