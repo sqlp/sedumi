@@ -144,9 +144,6 @@ end
 if ~isfield(pars.spars_thold,'DAt_q')
    pars.spars_thold.DAt_q=0.2;
 end
-if ~isfield(pars.spars_thold,'Alq')
-   pars.spars_thold.Alq=0.2;
-end
 if ~isfield(pars.spars_thold,'Arows')
    pars.spars_thold.Arows=0.1;
 end
