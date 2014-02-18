@@ -66,3 +66,4 @@ else
         end
     end
 end
+SYMBADA=sparse(SYMBADA); % later routines expect sparse format

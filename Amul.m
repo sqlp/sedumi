@@ -46,8 +46,14 @@ if isstruct(At) % dense and sparse components separate
       y=zeros(length(At.drows),1); % should be sparse?
       y(At.drows)=At.dense'*x;
       y(~At.drows)=(x'*At.sparse)';
-   else
-      y=At.dense*x(At.drows)+At.sparse*x(~At.drows);
+   else % need to special-case this to avoid errors adding zero-dimension vectors
+      if all(At.drows) % no sparse
+         y=At.dense*x(At.drows);
+      elseif ~any(At.drows) % no dense
+         y=At.sparse*x(~At.drows);
+      else
+         y=At.dense*x(At.drows)+At.sparse*x(~At.drows);
+      end
    end
 else % one sparse matrix
    if transp == 0
