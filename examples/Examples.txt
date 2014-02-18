@@ -70,3 +70,14 @@ formulated as LP, here reformulated as SDP for testing purposes. See
     How mathematics can help in design of mechanical structures.
     In D.F. Griffiths and G.A. Watson, eds., 
     Numerical Analysis 1995, Longman, Harlow, 1996, pp. 76--93.
+
+
+
+
+Array_Linf_LP.mat
+Array_L1_LP.mat
+
+Two array-pattern design problems, formulated as dual SOCP.
+Array_Linf_LP is completely dense, while Array_L1_LP is overall sparse
+but with a significant dense block.
+
