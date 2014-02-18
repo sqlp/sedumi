@@ -373,7 +373,7 @@ end
 % ----------------------------------------
 % Get nz-pattern of ADA.
 % ----------------------------------------
-ADA_sedumi_ = getsymbada(A,Ablkjc,DAt,K.sblkstart);
+ADA_sedumi_ = getsymbada(A,Ablkjc,DAt,K.sblkstart,pars);
 % ----------------------------------------
 % Ordering and symbolic factorization of ADA.
 % ----------------------------------------

@@ -1,5 +1,5 @@
-function SYMBADA = getsymbada(At,Ablkjc,DAt,psdblkstart)
-% SYMBADA = getsymbada(At,Ajc,DAt,psdblkstart)
+function SYMBADA = getsymbada(At,Ablkjc,DAt,psdblkstart,pars)
+% SYMBADA = getsymbada(At,Ajc,DAt,psdblkstart,pars)
 %
 % GETSYMBADA
 %   Ajc points to start of PSD-nonzeros per column
@@ -43,18 +43,26 @@ Ablks = findblks(At,Ablkjc,3,[],psdblkstart);
 if spars(Ablks)==1 || spars(Alpq)==1 || (~isempty(DAt.q) && spars(DAt.q)==1)
     SYMBADA=sparse(ones(size(At,2),size(At,2)));
 else
+    if (spars(DAt.q) > pars.spars_thold.DAt_q)
+       DAt.q=full(DAt.q);
+    end;
     SYMBADA=DAt.q'*DAt.q;
     if spars(SYMBADA)>0.9
         SYMBADA=sparse(ones(size(At,2),size(At,2)));
         return
     else
+        if(spars(Alpq) > pars.spars_thold.DAt_q)
+           Alpq=full(Alpq);
+        end;
         SYMBADA = SYMBADA + Alpq' * Alpq;
         if spars(SYMBADA)>0.9
             SYMBADA=sparse(ones(size(At,2),size(At,2)));
             return
         else
+            if(spars(Ablks) > pars.spars_thold.DAt_q)
+               Ablks=full(Ablks);
+            end;
             SYMBADA = SYMBADA + Ablks'*Ablks;
-
         end
     end
 end
