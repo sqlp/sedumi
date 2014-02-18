@@ -384,6 +384,15 @@ L = symbchol();
 % sparse ordering for dense column factorization
 % --------------------------------------------------
 symLden = symbcholden(L,dense,DAt);
+% ------------------------------------------------------------
+% Find dense rows of A (cols of At, which A is at this point), 
+% to be used in getada() and Amul() to 
+% ------------------------------------------------------------
+row_density=sum(logical(A))/N; % find row density, between 0 and 1
+A1.drows=(row_density>=pars.spars_thold.Arows); % logic map of dense rows
+clear row_density;
+A1.dense=full(A(:,A1.drows)); % dense rows
+A1.sparse=A(:,~A1.drows); % sparse rows
 % ----------------------------------------
 % Initial solution
 % ----------------------------------------
@@ -439,7 +448,7 @@ while STOP == 0
     %TODO: getada3 needs to be ported to matlab
     if sum(K.s)==0
         %This will update the global ADA variable
-        absd=getada(A,K,d,DAt);
+        absd=getada(A1,K,d,DAt,pars);
     else
         ADA_sedumi_ = getada1(ADA_sedumi_, A, Ablkjc(:,3), Aord.lqperm, d, K.qblkstart);
         ADA_sedumi_ = getada2(ADA_sedumi_, DAt, Aord, K);
@@ -457,15 +466,18 @@ while STOP == 0
     % ----------------------------------------
     % FACTORIZATION of self-dual embedding
     % ----------------------------------------
-    Lsd = sdfactor(L,Lden, dense,DAt, d,v,y, A,c,K,R, y0,pars);
+    %Lsd = sdfactor(L,Lden, dense,DAt, d,v,y, A,c,K,R, y0,pars);
+    Lsd = sdfactor(L,Lden, dense,DAt, d,v,y, A1,c,K,R, y0,pars);
     % ------------------------------------------------------------
     % Compute and take IPM-step
     % from (v,y,v, y0) --> (xscl,y,zscl,y0)
     % ------------------------------------------------------------
     y0Old = y0;
+    %[xscl,yNxt,zscl,y0Nxt, w,relt, dxmdz,err, wr] = ...
+    %    wregion(L,Lden,Lsd,...
+    %    d,v,vfrm,A,DAt,dense, R,K,y,y0,b, pars, wr);
     [xscl,yNxt,zscl,y0Nxt, w,relt, dxmdz,err, wr] = ...
-        wregion(L,Lden,Lsd,...
-        d,v,vfrm,A,DAt,dense, R,K,y,y0,b, pars, wr);
+        wregion(L,Lden,Lsd,d,v,vfrm,A1,DAt,dense, R,K,y,y0,b, pars, wr);
     % ------------------------------------------------------------
     % Evaluate the computed step.
     % ------------------------------------------------------------

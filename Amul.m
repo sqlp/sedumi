@@ -40,18 +40,30 @@ function y = Amul(At,dense,x,transp)
 if nargin < 4
     transp = 0;
 end
-if transp == 0
-    %Since At is sparse calculating At'*x takes a lot of time, while x'*At
-    %is much faster!
-    y = (x'*At)';                     %y(m) and x(N).
-else
-    y = full(At*x);        % y(N) and x(m)
+
+if isstruct(At) % dense and sparse components separate
+   if transp == 0
+      y=zeros(length(At.drows),1); % should be sparse?
+      y(At.drows)=At.dense'*x;
+      y(~At.drows)=(x'*At.sparse)';
+   else
+      y=At.dense*x(At.drows)+At.sparse*x(~At.drows);
+   end
+else % one sparse matrix
+   if transp == 0
+      %Since At is sparse calculating At'*x takes a lot of time, while x'*At
+      %is much faster!
+      y = (x'*At)';                     %y(m) and x(N).
+   else
+      y = full(At*x);        % y(N) and x(m)
+   end
 end
+
 if ~isempty(dense.cols)
     if transp == 0
         y = y + dense.A*x(dense.cols);
     else
-        y = full(At*x);
+        %y = full(At*x); % why is this computed again?
         y(dense.cols) = dense.A'*x;
     end
 end

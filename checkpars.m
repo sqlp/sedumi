@@ -130,6 +130,27 @@ if ~isfield(pars,'denf')
     pars.denf=10;
 end
 % --------------------------------------------------
+% Sparsity thresholds: range is 0 to 1, lower values 
+% can use more memory but may run faster due to much
+% better optimization of dense linear algebra routines.
+% Only applies to linear and SOCP currently.
+% --------------------------------------------------
+if ~isfield(pars,'spars_thold')
+    pars.spars_thold=struct;
+end
+if ~isfield(pars.spars_thold,'ADA')
+    pars.spars_thold.ADA=0.3;
+end
+if ~isfield(pars.spars_thold,'DAt_q')
+   pars.spars_thold.DAt_q=0.2;
+end
+if ~isfield(pars.spars_thold,'Alq')
+   pars.spars_thold.Alq=0.2;
+end
+if ~isfield(pars.spars_thold,'Arows')
+   pars.spars_thold.Arows=0.1;
+end
+% --------------------------------------------------
 % Numerical control
 % --------------------------------------------------
 if ~isfield(pars,'numtol')           % Criterion for refinement
