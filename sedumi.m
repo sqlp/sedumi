@@ -794,9 +794,11 @@ if ~isempty(origcoeff)
     if origcoeff.K.f<length(origcoeff.c)
         %not all primal variables are free
         %     Primal cone infeasibility
-        info.err(2)=max(0,-min(eigK(full(x(origcoeff.K.f+1:end)),origcoeff.K)/(1+normb)));
+        tempK = origcoeff.K;
+        tempK.f = 0;
+        info.err(2)=max(0,-min(eigK(full(x(origcoeff.K.f+1:end)),tempK)/(1+normb)));
         %     Dual cone infeasibility
-        info.err(4)=max(0,-min(eigK(full(s(origcoeff.K.f+1:end)),origcoeff.K)/(1+normc)));
+        info.err(4)=max(0,-min(eigK(full(s(origcoeff.K.f+1:end)),tempK)/(1+normc)));
         
     else
         info.err(2)=0;
