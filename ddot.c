@@ -204,13 +204,15 @@ void mexFunction(int nlhs, mxArray *plhs[],
    CASE THAT X IS FULL:
    ------------------------------------------------------------ */
   if(!mxIsSparse(X_IN)){
-    if(nrows != qDim)
+    if(nrows != qDim) {
       if(nrows < blkstart[nblk]){
          mxAssert(nrows == nblk + qDim, "X size mismatch");
          X.pr += nblk;                 /* Lorentz tr + norm bound */
       }
-      else                        /* LP, Lorentz, PSD */
-	X.pr += blkstart[0];      /* Point to Lorentz norm-bound */
+      else {                        /* LP, Lorentz, PSD */
+    	X.pr += blkstart[0];      /* Point to Lorentz norm-bound */
+      }
+    }
 /* ------------------------------------------------------------
    DDOTX is full nblk x m.
    ------------------------------------------------------------ */
