@@ -69,7 +69,8 @@ cachsz = 512;
 % If the matrix is actually dense we don't bother.
 % ----------------------------------------
 if spars(ADA_sedumi_)<1
-    perm = ordmmdmex(ADA_sedumi_);
+    %perm = ordmmdmex(ADA_sedumi_);
+    perm = symamd(ADA_sedumi_);
     L = symfctmex(ADA_sedumi_,perm);
 else
     L.perm=(1:size(ADA_sedumi_,1))';
