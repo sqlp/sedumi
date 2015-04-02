@@ -181,6 +181,7 @@ if need_rebuild,
         if VERSION >= 7 && ispc,
             if IS64BIT, dirval = 'win64'; else dirval = 'win32'; end
             libdir = [ matlabroot, fs, 'external', fs, 'lib', fs, dirval, fs ];
+            found = false;
             if exist( [ libdir, 'microsoft' ], 'dir' ),
                 libdir = [ libdir, 'microsoft' ];
                 found = true;
@@ -191,7 +192,7 @@ if need_rebuild,
                 libdir = [ libdir, 'lcc' ];
                 found = true;
             end
-            if found,
+            if found
                 libs{end+1} = [ '-L"', libdir, '"' ];
             end
         end
