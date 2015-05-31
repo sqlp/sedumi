@@ -37,6 +37,14 @@
 #if !defined(BLKSDP)
 #define BLKSDP
 #include "mex.h"
+#ifdef OCTAVE
+#include "f77blas.h"
+#define FORT(x) BLASFUNC(x)
+#else
+#include "blas.h"
+#define FORT(x) FORTRAN_WRAPPER(x)
+typedef ptrdiff_t blasint;
+#endif
 
 /* ------------------------------------------------------------
    Type definitions:
@@ -114,22 +122,6 @@ typedef struct{
 
 #define kiqsort(vec,n)  qsort((void *)(vec), (n), sizeof(keyint), (COMPFUN) kicmp);
 #define kdsortdec(vec,n)  qsort((void *)(vec), (n), sizeof(keydouble), (COMPFUN) kdcmpdec);
-
-/*BLAS functions returning anything other than void need to be declared here as
- *Matlab does not include a header file, so the compiler will
- *assume they return an int.*/
-#ifdef PC
-#define FORT(x) x
-#else
-#define FORT(x) x ## _
-#endif
-
-double FORT(ddot)(const mwIndex*, const double*, const mwIndex*, const double*, const mwIndex*);
-double FORT(dnrm2)(const mwIndex*, const double*, const mwIndex*);
-mwIndex FORT(idamax)(const mwIndex *,const double *,const mwIndex *);
-void FORT(dcopy)(const mwIndex*,const double*,const mwIndex*,double*,const mwIndex*);
-void FORT(dscal)(const mwIndex*,const double*,double*,const mwIndex*);
-void FORT(daxpy)(const mwIndex*,const double*,const double*,const mwIndex*,double*,const mwIndex*);
 
 /* ------------------------------------------------------------
    Prototypes:

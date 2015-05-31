@@ -43,15 +43,8 @@
    ************************************************************ */
 double realdot(const double *x, const double *y, const mwIndex n)
 {
-    mwIndex one=1;
-    #ifdef PC
-    return ddot(&n,x,&one,y,&one);
-    #endif
-    
-    #ifdef UNIX
-    return ddot_(&n,x,&one,y,&one);
-    #endif
-    
+    blasint one=1,nn=n;
+    return FORT(ddot)(&nn,(double*)x,&one,(double*)y,&one);
 }
 
 /* ************************************************************
@@ -60,12 +53,6 @@ double realdot(const double *x, const double *y, const mwIndex n)
    ************************************************************ */
 double realssqr(const double *x, const mwIndex n)
 {
-    mwIndex one=1;
-    #ifdef PC
-    return ddot(&n,x,&one,x,&one);
-    #endif
-
-    #ifdef UNIX
-    return ddot_(&n,x,&one,x,&one);
-    #endif    
+    mwIndex one=1,nn=n;
+    return FORT(ddot)(&nn,(double*)x,&one,(double*)x,&one);
 }
