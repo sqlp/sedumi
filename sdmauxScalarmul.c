@@ -38,53 +38,30 @@
    TIME-CRITICAL PROCEDURE -- scalarmul
    Computes  r = alpha * x  using BLAS.
    ************************************************************ */
-void scalarmul(double *r, const double alpha,const double *x,const mwIndex n)
+void scalarmul(double *r, double alpha,const double *x,mwIndex n)
 {
-  mwIndex one=1;
-  #ifdef PC
-  dcopy(&n,x,&one,r,&one);
-  dscal(&n,&alpha,r,&one);
-  #endif
-  #ifdef UNIX
-  dcopy_(&n,x,&one,r,&one);
-  dscal_(&n,&alpha,r,&one);
-  #endif  
-  return;
-  
+    blasint one=1,nn=n;
+    FORT(dcopy)(&nn,(double*)x,&one,r,&one);
+    FORT(dscal)(&nn,&alpha,r,&one);
 }
 
 /* ************************************************************
    TIME-CRITICAL PROCEDURE -- addscalarmul
    Computes  r += alpha * x  using BLAS.
    ************************************************************ */
-void addscalarmul(double *r, const double alpha,const double *x,const mwIndex n)
+void addscalarmul(double *r, double alpha,const double *x,mwIndex n)
 {
-  /*USE BLAS*/
-    mwIndex one=1;
-    #ifdef PC
-    daxpy(&n,&alpha,x,&one,r,&one);
-    #endif
-    #ifdef UNIX
-    daxpy_(&n,&alpha,x,&one,r,&one);
-    #endif    
-    return;
-  
+    blasint one=1,nn=n;
+    FORT(daxpy)(&nn,&alpha,(double*)x,&one,r,&one);
 }
 
 /* ************************************************************
    TIME-CRITICAL PROCEDURE -- subscalarmul(x,alpha,y,n)
    Computes x -= alpha * y using BLAS.
    ************************************************************ */
-void subscalarmul(double *x, const double alpha, const double *y, const mwIndex n)
+void subscalarmul(double *x, double alpha, const double *y, mwIndex n)
 {
-  /*USE BLAS*/
-    mwIndex one=1;
-    const double minusalpha=-alpha;
-    #ifdef PC
-    daxpy(&n,&minusalpha,y,&one,x,&one);
-    #endif
-    #ifdef UNIX
-    daxpy_(&n,&minusalpha,y,&one,x,&one);
-    #endif    
-    return;
+    blasint one=1,nn=n;
+    double minusalpha=-alpha;
+    FORT(daxpy)(&nn,&minusalpha,(double*)y,&one,x,&one);
 }
