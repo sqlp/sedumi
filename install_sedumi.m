@@ -35,6 +35,7 @@ function install_sedumi( varargin )
 % 02110-1301, USA
 
 need_rebuild = any( strcmp( varargin, '-rebuild' ) );
+no_path = any( strcmp( varargin, '-nopath' ) );
 
 targets64={...
     'bwblkslv.c sdmauxFill.c sdmauxRdot.c',...
@@ -138,7 +139,11 @@ if ~need_rebuild,
     else
         fprintf( 'found!\n' );
         fprintf( '   If for some reason you need to rebuild the binaries, use this command:\n' );
-        fprintf( '      install_sedumi -rebuild\n' );
+        if no_path,
+            fprintf( '      install_sedumi -nopath -rebuild\n' );
+        else
+            fprintf( '      install_sedumi -rebuild\n' );
+        end
     end
 else
     nfound = [1,0];
@@ -216,7 +221,11 @@ if need_rebuild,
     end
 end
 
-if any(nfound),
+if ~any(nfound),
+    disp( line );
+    disp( 'SeDuMi was not successfully installed.' );
+    disp( 'Please attempt to correct the errors and try again.' );
+elseif ~no_path,
     disp( line );
     fprintf( 'Adding SeDuMi to the %s path:\n', prog );
     ps = pathsep;
@@ -263,10 +272,6 @@ if any(nfound),
     disp( line );
     disp('SeDuMi has been succesfully installed.' );
     disp( 'For more information, type "help sedumi" or see the user guide.')
-else
-    disp( line );
-    disp( 'SeDuMi was not successfully installed.' );
-    disp( 'Please attempt to correct the errors and try again.' );
 end
 
 fprintf('%s\n\n',line);
