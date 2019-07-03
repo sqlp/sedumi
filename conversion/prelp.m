@@ -56,7 +56,6 @@ function [A,b,c,lenx,lbounds,times] = prelp(pname)
 global OUTFID
 global Ubounds_exist
 if ~exist('loadata','file') || ~exist('preprocess','file')
-if ~exist('loadata','file') | ~exist('preprocess','file')
     error('To use PRELP, you need to have LIPSOL installed.')
 end
 
