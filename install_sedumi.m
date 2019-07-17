@@ -36,6 +36,13 @@ function install_sedumi( varargin )
 
 need_rebuild = any( strcmp( varargin, '-rebuild' ) );
 no_path = any( strcmp( varargin, '-nopath' ) );
+openblas_path = '';
+for v = 1:length(varargin)
+  [ob_S, ob_E, ob_TE, ob_M, ob_T, ob_NM, ob_SP] = regexp( varargin{v}, '-obpath=(?<path>.*)' );
+  if ~isempty(ob_NM.path)
+    openblas_path = ob_NM.path;
+  end
+end
 
 targets64={...
     'bwblkslv.c sdmauxFill.c sdmauxRdot.c',...
@@ -156,6 +163,16 @@ if need_rebuild,
     IS64BIT  = ~ISOCTAVE & strcmp(COMPUTER(end-1:end),'64');
     flags = {};
     libs = {};
+    
+    if ~isempty(openblas_path)
+      if ~isdir(openblas_path)
+        disp('OpenBLAS path not valid!');
+        break;
+      else
+        flags{end+1} = strcat('-I', openblas_path);
+      end
+    end
+    
     if ISOCTAVE,
         % Octave has mwSize and mwIndex hardcoded in mex.h as ints.
         % There is no definition for mwSignedIndex so include it here.  
