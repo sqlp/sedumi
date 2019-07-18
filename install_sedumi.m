@@ -167,7 +167,7 @@ if need_rebuild,
     if ~isempty(openblas_path)
       if ~isdir(openblas_path)
         disp('OpenBLAS path not valid!');
-        break;
+        return;
       else
         flags{end+1} = strcat('-I', openblas_path);
       end
