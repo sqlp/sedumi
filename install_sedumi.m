@@ -39,7 +39,7 @@ no_path = any( strcmp( varargin, '-nopath' ) );
 openblas_path = '';
 for v = 1:length(varargin)
   [ob_S, ob_E, ob_TE, ob_M, ob_T, ob_NM, ob_SP] = regexp( varargin{v}, '-obpath=(?<path>.*)' );
-  if ~isempty(ob_NM.path)
+  if ~isempty(ob_NM) && ~isempty(ob_NM.path)
     openblas_path = ob_NM.path;
   end
 end
