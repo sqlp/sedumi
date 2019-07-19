@@ -185,6 +185,10 @@ if need_rebuild,
         flags{end+1} = '-O';
         flags{end+1} = '-DOCTAVE';
         libs{end+1} = '-lblas';
+        
+        if isempty(openblas_path)
+          flags{end+1} = strcat('-I', '/usr/include/openblas');
+        end
     else
         flags{end+1} = '-O';
         if IS64BIT && ( VERSION >= 7.03 ),
@@ -244,6 +248,8 @@ if ~any(nfound),
     disp( line );
     disp( 'SeDuMi was not successfully installed.' );
     disp( 'Please attempt to correct the errors and try again.' );
+    disp( 'For example, try setting the OpenBLAS include path with' );
+    disp('  install_sedumi -obpath=/path/to/openblas/headers');
 elseif ~no_path,
     disp( line );
     fprintf( 'Adding SeDuMi to the %s path:\n', prog );
