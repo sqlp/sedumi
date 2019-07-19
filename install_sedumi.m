@@ -165,7 +165,7 @@ if need_rebuild,
     libs = {};
     
     if ~isempty(openblas_path)
-      if ~isdir(openblas_path)
+      if exist (openblas_path, "dir") ~= 7
         disp('Please set the correct OpenBLAS include path with');
         disp('  install_sedumi -obpath=/path/to/openblas/headers');
         disp('(the directory where the f77blas.h file is located).');
