@@ -36,6 +36,13 @@ function install_sedumi( varargin )
 
 need_rebuild = any( strcmp( varargin, '-rebuild' ) );
 no_path = any( strcmp( varargin, '-nopath' ) );
+openblas_path = '';
+for v = 1:length(varargin)
+  ob_NM = regexp( varargin{v}, '-obpath=(?<path>.*)', 'names' );
+  if ~isempty(ob_NM) && ~isempty(ob_NM.path)
+    openblas_path = ob_NM.path;
+  end
+end
 
 targets64={...
     'bwblkslv.c sdmauxFill.c sdmauxRdot.c',...
@@ -156,6 +163,18 @@ if need_rebuild,
     IS64BIT  = ~ISOCTAVE & strcmp(COMPUTER(end-1:end),'64');
     flags = {};
     libs = {};
+    
+    if ~isempty(openblas_path)
+      if exist (openblas_path, "dir") ~= 7
+        disp('Please set the correct OpenBLAS include path with');
+        disp('  install_sedumi -obpath=/path/to/openblas/headers');
+        disp('(the directory where the f77blas.h file is located).');
+        return;
+      else
+        flags{end+1} = strcat('-I', openblas_path);
+      end
+    end
+    
     if ISOCTAVE,
         % Octave has mwSize and mwIndex hardcoded in mex.h as ints.
         % There is no definition for mwSignedIndex so include it here.  
@@ -166,6 +185,10 @@ if need_rebuild,
         flags{end+1} = '-O';
         flags{end+1} = '-DOCTAVE';
         libs{end+1} = '-lblas';
+        
+        if isempty(openblas_path)
+          flags{end+1} = strcat('-I', '/usr/include/openblas');
+        end
     else
         flags{end+1} = '-O';
         if IS64BIT && ( VERSION >= 7.03 ),
@@ -225,6 +248,8 @@ if ~any(nfound),
     disp( line );
     disp( 'SeDuMi was not successfully installed.' );
     disp( 'Please attempt to correct the errors and try again.' );
+    disp( 'For example, try setting the OpenBLAS include path with' );
+    disp('  install_sedumi -obpath=/path/to/openblas/headers');
 elseif ~no_path,
     disp( line );
     fprintf( 'Adding SeDuMi to the %s path:\n', prog );
