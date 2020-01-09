@@ -120,7 +120,7 @@ mex_binaries = cellfun (@(x) strrep (x, '.c', ['.', mexext()]), ...
   mex_binaries, 'UniformOutput', false);
 
 sedumi_path = mfilename ('fullpath');
-sedumi_path = sedumi_path(1:max ([1, strfind (sedumi_path, filesep ())]) - 1);
+sedumi_path = sedumi_path(1:max ([1, strfind(sedumi_path, filesep ())]) - 1);
 
 ISOCTAVE = (exist ('OCTAVE_VERSION', 'builtin') == 5);
 if (ISOCTAVE)
