@@ -40,9 +40,25 @@
 #ifdef OCTAVE
 #include "f77blas.h"
 #define FORT(x) BLASFUNC(x)
-#else
+#else /* Matlab */
 #include "blas.h"
+/**
+ * For Matlab R2019a (probably before) and newer, when including
+ * "blas.h" the respective BLAS identifiers are already defined,
+ * e.g. for "dcopy":
+ *
+ *   #define dcopy FORTRAN_WRAPPER(dcopy)
+ *
+ * thus calling FORT(dcopy) == FORTRAN_WRAPPER(dcopy) inside SeDuMi
+ * would result in "dcopy__" and already resulted in some bug reports.
+ *
+ * Compiling with -DFWRAPPER restores the previous behavior.
+ */
+#ifdef FWRAPPER
 #define FORT(x) FORTRAN_WRAPPER(x)
+#else
+#define FORT(x) x
+#endif
 typedef ptrdiff_t blasint;
 #endif
 
