@@ -19,6 +19,20 @@ jobs:
         apt:
           update: true
       script: octave --eval "cd examples; test_sedumi(1, 1);"
+    - os: linux
+      dist: bionic # 18.04 LTS, Octave 5.1.0 (flatpak)
+      before_install:
+      - sudo add-apt-repository -y ppa:alexlarsson/flatpak
+      - sudo apt update
+      - sudo apt-get -y install flatpak
+      - flatpak remote-add --user --if-not-exists
+                flathub https://flathub.org/repo/flathub.flatpakrepo
+      - flatpak install --user -y flathub org.octave.Octave
+      addons:
+        apt:
+          update: true
+      script:
+      - flatpak run org.octave.Octave --eval "cd examples; test_sedumi(1, 1);"
     - os: osx
       before_install:
       - brew unlink python@2
