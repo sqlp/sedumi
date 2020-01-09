@@ -165,3 +165,10 @@ pip-log.txt
 #### OPTI #####
 opti_sedumi.m
 opti_SEDUMI_Install.m
+
+##################
+## Matlab/Octave
+##################
+
+# Do not track changes to the mex files.
+*.mex*
