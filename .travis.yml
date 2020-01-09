@@ -1,0 +1,29 @@
+language: shell
+notifications:
+  email: false
+jobs:
+  include:
+    - os: linux
+      dist: xenial # 16.04 LTS, Octave 4.0.0
+      before_install:
+      - sudo apt-get -y install octave liboctave-dev libopenblas-dev
+      addons:
+        apt:
+          update: true
+      script: octave --eval "cd examples; test_sedumi(1, 1);"
+    - os: linux
+      dist: bionic # 18.04 LTS, Octave 4.2.2
+      before_install:
+      - sudo apt-get -y install octave liboctave-dev libopenblas-dev
+      addons:
+        apt:
+          update: true
+      script: octave --eval "cd examples; test_sedumi(1, 1);"
+    - os: osx
+      before_install:
+      - brew unlink python@2
+      - brew install octave
+      addons:
+        homebrew:
+          update: true
+      script: octave --eval "cd examples; test_sedumi(1, 1);"
