@@ -60,8 +60,8 @@ if (any (mex_template))
   % Minimal validation.
   % "contains" would be better, but introduced in Matlab R2016b.
   if (isempty (strfind (mex_template, ' %s '))) %#ok<STREMP>
-    error (['The mex compilation command must contain ''%s'' as ', ...
-      'placeholer for the source files.']);
+    error (['The mex compilation command must contain '' %s '' as ', ...
+      'placeholder for the source files.']);
   end
 else
   mex_template = '';
@@ -119,15 +119,13 @@ mex_binaries = cellfun (@strtok, targets64, 'UniformOutput', false);
 mex_binaries = cellfun (@(x) strrep (x, '.c', ['.', mexext()]), ...
   mex_binaries, 'UniformOutput', false);
 
-sedumi_path = mfilename('fullpath');
-sedumi_path = sedumi_path( 1 : max([1,strfind(sedumi_path,filesep ())]) - 1 );
-ISOCTAVE = exist('OCTAVE_VERSION','builtin');
-% Note the use of 0.01 here. That's because version 7 had more than 10
-% minor releases, so 7.10-7.14 need to be ordered after 7.01-7.09.
-VERSION  = [1,0.01]*sscanf(version,'%d.%d');
-if ISOCTAVE
+sedumi_path = mfilename ('fullpath');
+sedumi_path = sedumi_path(1:max ([1, strfind (sedumi_path, filesep ())]) - 1);
+
+ISOCTAVE = (exist ('OCTAVE_VERSION', 'builtin') == 5);
+if (ISOCTAVE)
   prog = 'Octave';
-  page_output_immediately( true, 'local' );
+  page_output_immediately (true, 'local');
 else
   prog = 'Matlab';
 end
@@ -136,18 +134,17 @@ end
 count_mex_binaries = @() sum (cellfun (@(x) (exist (x, 'file') == 3), ...
   fullfile (sedumi_path, mex_binaries)));
 
-% We don't want to rebuild the binaries if they're already present, unless
-% the user has specifically asked for a rebuild. Frankly, we can't
-% guarantee that rebuilding will work.
-
 line_sep = repmat ('-', 1, 75);
-fprintf ('\n%s\nSeDuMi installation script\n',line_sep);
+fprintf ('\n%s\nSeDuMi installation script\n', line_sep);
 fprintf ('   Directory: %s\n', sedumi_path);
 fprintf ('   %s %s on %s\n', prog, version (), computer ());
 disp (line_sep);
 
+% We don't want to rebuild the binaries if they're already present, unless
+% the user has specifically asked for a rebuild. Frankly, we can't
+% guarantee that rebuilding will work.
 if (~need_rebuild)
-  fprintf( 'Looking for existing binaries...' );
+  fprintf ('Looking for existing binaries...');
   nfound = count_mex_binaries ();
   if (nfound == 0)
     fprintf ('none found; building...\n');
@@ -182,44 +179,47 @@ if (need_rebuild)
       flags{end+1} = '-O2';
       flags{end+1} = '-DOCTAVE';
       % Including the default OpenBLAS path works for most Octave
-      % installations and does not harm if not existing.  Customization
-      % by providing a mex template.
+      % installations and does not harm if not present.
+      % Customization by providing a mex template.
       flags{end+1} = '-I/usr/include/openblas';
     else % Matlab
+      % Note the use of 0.01 here. That's because version 7 had more than 10
+      % minor releases, so 7.10-7.14 need to be ordered after 7.01-7.09.
+      VERSION  = [1, 0.01] * sscanf (version (), '%d.%d');
       COMPUTER = computer ();
-      IS64BIT = strcmp(COMPUTER(end-1:end),'64');
+      % The last Matlab release with a 32 bit version was R2015b.
+      IS64BIT  = strcmp (COMPUTER(end-1:end), '64');
       flags{end+1} = '-O';  % optimize
-      if IS64BIT && ( VERSION >= 7.03 )
+      if (IS64BIT && (VERSION >= 7.03)) % R2006b
         flags{end+1} = '-largeArrayDims';
-      elseif VERSION < 7.03
+      elseif (VERSION < 7.03)           % R2006b
         flags{end+1} = '-DmwIndex=int';
         flags{end+1} = '-DmwSize=int';
         flags{end+1} = '-DmwSignedIndex=int';
         flags{end+1} = '-DFWRAPPER';
       end
-      if VERSION >= 7 && ispc
+      if ((VERSION >= 7) && ispc ())  % R14 (2004)
         if IS64BIT
           dirval = 'win64';
         else
-          % The last Matlab release with a 32 bit version was R2015b.
           dirval = 'win32';
         end
         libdir = fullfile (matlabroot (), 'extern', 'lib', dirval);
-        if exist (fullfile (libdir, 'microsoft'), 'dir' )
+        if exist (fullfile (libdir, 'microsoft'), 'dir')
           libdir = fullfile (libdir, 'microsoft');
           found = true;
-        elseif exist( [ libdir, 'msvc60' ], 'dir' )
+        elseif exist (fullfile (libdir, 'msvc60'), 'dir')
           libdir = fullfile (libdir, 'msvc60');
           found = true;
-        elseif exist( [ libdir, 'lcc' ], 'dir' )
+        elseif exist (fullfile (libdir, 'lcc'), 'dir')
           libdir = fullfile (libdir, 'lcc');
           found = true;
         end
         if found
-          libs{end+1} = [ '-L"', libdir, '"' ];
+          libs{end+1} = [ '-L''', libdir, '''' ];
         end
       end
-      if VERSION >= 7.05
+      if (VERSION >= 7.05)  % R2007b
         libs{end+1} = '-lmwblas';
       else
         libs{end+1} = '-lmwlapack';
@@ -229,10 +229,10 @@ if (need_rebuild)
       sprintf(' %s', libs{:})];
   end
 
-  failed = false;
   fprintf ('Template: %s\n', mex_template);
 
   % Move to SeDuMi root directory and compile.
+  failed = false;
   olddir = cd (sedumi_path);
   for i = 1:length(targets64)
     fprintf ('   %s:\t%s\n', mex_binaries{i}, targets64{i});
@@ -253,8 +253,7 @@ if (need_rebuild)
 end
 
 % Final check if all mex binaries are present.
-nfound = count_mex_binaries ();
-if (nfound < length (targets64))
+if (count_mex_binaries () < length (targets64))
   error (['%s\nSeDuMi was not successfully installed.\n', ...
     'Please attempt to correct the errors and try again.\n\n', ...
     'For example, try setting the compilation command:\n\n', ...
@@ -273,31 +272,31 @@ if (~no_path)
     is_on_search_path = @(x) any (strcmp (x, search_path_cstr));
   end
 
-  fprintf( '   Base directory...       ' );
+  fprintf ('   Base directory...       ');
   if (~is_on_search_path (sedumi_path))
     addpath (sedumi_path);
-    fprintf( 'added.\n' );
+    fprintf ('added.\n');
   else
-    fprintf( 'already there.\n' );
+    fprintf ('already there.\n');
   end
-  fprintf( '   Conversion directory... ' );
+  fprintf ('   Conversion directory... ');
   if (~is_on_search_path (fullfile (sedumi_path, 'conversion')))
     addpath (fullfile (sedumi_path, 'conversion'));
-    fprintf( 'added.\n' );
+    fprintf ('added.\n');
   else
-    fprintf( 'already there.\n' );
+    fprintf ('already there.\n');
   end
-  fprintf( '   Examples directory...   '  );
+  fprintf ('   Examples directory...   ');
   if (~is_on_search_path (fullfile (sedumi_path, 'examples')))
     addpath (fullfile (sedumi_path, 'examples'));
-    fprintf( 'added.\n' );
+    fprintf ('added.\n');
   else
-    fprintf( 'already there.\n' );
+    fprintf ('already there.\n');
   end
 end
 
 disp (line_sep);
-disp ('SeDuMi has been succesfully installed.');
+disp ('SeDuMi has been successfully installed.');
 disp ('For more information, type "help sedumi" or see the user guide.');
 disp (line_sep);
 fprintf ('\n\n');
