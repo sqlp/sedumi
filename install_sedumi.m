@@ -2,8 +2,8 @@ function install_sedumi( varargin )
 
 %SeDuMi installation script
 %
-% Heavy rewrite by Michael C. Grant for SeDuMi 1.34
-% Now detects if binaries are already 
+% Heavy rewrite by Michael C. Grant for SeDuMi 1.3.4
+% Now detects if binaries are already
 %
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
 % Copyright (C) 2005 McMaster University, Hamilton, CANADA  (since 1.1)
