@@ -27,3 +27,6 @@ jobs:
         homebrew:
           update: true
       script: octave --eval "cd examples; test_sedumi(1, 1);"
+    - os: windows
+      before_install: choco install octave.portable
+      script: octave-cli.exe --eval "cd examples; test_sedumi(1, 1);"
