@@ -169,6 +169,7 @@ end
 if (need_rebuild)
   disp ('Attempting to recompile the SeDuMi binaries:');
 
+  % Customization by providing a mex template.
   if (isempty (mex_template))
     flags = {};
     libs = {};
@@ -180,8 +181,14 @@ if (need_rebuild)
       flags{end+1} = '-DOCTAVE';
       % Including the default OpenBLAS path works for most Octave
       % installations and does not harm if not present.
-      % Customization by providing a mex template.
-      flags{end+1} = '-I/usr/include/openblas';
+      if (ismac ())
+        % Assume Homebrew (https://brew.sh/) installation.
+        % https://stackoverflow.com/questions/50634727/dyld-library-not-loaded-usr-local-opt-openblas-lib-libopenblasp-r0-2-20-dylib
+        flags{end+1} = '-I/usr/local/opt/openblas/include';
+        libs{end+1}  = '-L/usr/local/opt/openblas/lib -lopenblas';
+      else
+        flags{end+1} = '-I/usr/include/openblas';
+      end
     else % Matlab
       % Note the use of 0.01 here. That's because version 7 had more than 10
       % minor releases, so 7.10-7.14 need to be ordered after 7.01-7.09.
