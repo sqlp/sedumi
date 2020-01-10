@@ -8,7 +8,7 @@ function [At,b,c,K,prep,origcoeff] = pretransfo(At,b,c,K,pars)
 %
 % See also sedumi
 
-% Nearly complete rewrite for SeDumI 1.4
+% Nearly complete rewrite
 % Copyright (c) 2013 Michael C. Grant
 %
 % This file is part of SeDuMi 1.1 by Imre Polik and Oleksandr Romanko
