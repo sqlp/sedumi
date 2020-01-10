@@ -15,8 +15,12 @@ try
   end
   cd (old_dir)
   
+  example_path = mfilename ('fullpath');
+  example_path = example_path(1:max ([1, strfind(example_path, filesep ())]) - 1);
+  
   test_problems = {'arch0.mat', 'control07.mat', 'nb.mat', ...
     'OH_2Pi_STO-6GN9r12g1T2.mat', 'trto3.mat'};
+  
   for i = 1:length (test_problems)
     line_sep = repmat ('-', 1, 75);
     fprintf ('\n%s\n-- Test ''%s'' (%2d/%2d)\n%s\n\n', line_sep, ...
