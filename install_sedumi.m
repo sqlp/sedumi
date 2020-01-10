@@ -179,14 +179,16 @@ if (need_rebuild)
       % whereas calling '-O' would result in gcc '-O1'.
       flags{end+1} = '-O2';
       flags{end+1} = '-DOCTAVE';
-      % Including the default OpenBLAS path works for most Octave
-      % installations and does not harm if not present.
       if (ismac ())
         % Assume Homebrew (https://brew.sh/) installation.
         % https://stackoverflow.com/questions/50634727/dyld-library-not-loaded-usr-local-opt-openblas-lib-libopenblasp-r0-2-20-dylib
         flags{end+1} = '-I/usr/local/opt/openblas/include';
         libs{end+1}  = '-L/usr/local/opt/openblas/lib -lopenblas';
+      elseif (ispc ())
+        libs{end+1}  = '-lopenblas';
       else
+        % Including the default OpenBLAS path works for most Octave
+        % installations and does not harm if not present.
         flags{end+1} = '-I/usr/include/openblas';
       end
     else % Matlab
