@@ -223,7 +223,7 @@ if (need_rebuild)
           found = true;
         end
         if found
-          libs{end+1} = [ '-L''', libdir, '''' ];
+          libs{end+1} = ['-L''', strrep(libdir, '\', '\\'), ''''];
         end
       end
       if (VERSION >= 7.05)  % R2007b
