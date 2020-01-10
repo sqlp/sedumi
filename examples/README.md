@@ -9,6 +9,7 @@ http://plato.asu.edu/sub/testcases.html.
   > T. Nakamura and M. Ohsaki. A Natural Generator of Optimum Topology of
   > Plane Trusses for Specified Fundamental Frequency.  Computer Methods in
   > Applied Mechanics and Engineering 94(1992):113-129.
+  > DOI: [10.1016/0045-7825(92)90159-H](https://doi.org/10.1016/0045-7825(92)90159-H).
 
   Optimal value is `5.66517e-01`.
 
@@ -24,9 +25,9 @@ http://plato.asu.edu/sub/testcases.html.
   Optimal value is `2.06251e+01`.
 
 
-- `nb.mat`:  This problem is by Robert Vanderbei, it was used at the 7th DIMACS
-  computational Challenge.  It is a middle-sized mixed second-order/linear
-  problem.
+- `nb.mat`:  This problem is by Robert Vanderbei, it was used at the
+  [7th DIMACS computational Challenge](http://archive.dimacs.rutgers.edu/Challenges/Seventh/).
+  It is a middle-sized mixed second-order/linear problem.
 
   Optimal value is `-0.05070309`.
 
@@ -37,6 +38,7 @@ http://plato.asu.edu/sub/testcases.html.
   > Z. Zhao, B. J. Braams, M. Fukuda, M. L. Overton, and J. K. Percus,
   > "The reduced density matrix method for electronic structure calculations
   > and the role of three-index representability", October, 2003.
+  > DOI: [10.1063/1.1636721](https://doi.org/10.1063/1.1636721).
 
   at http://mf.c.titech.ac.jp/mituhiro/software.html.
 
