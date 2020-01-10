@@ -2,7 +2,7 @@ In this folder there are some example problems that you can try with SeDuMi.
 For more problems see the Homepage of Hans D. Mittelmann
 http://plato.asu.edu/sub/testcases.html.
 
-- `arch0.mat`: A middle sized SDP problem from the SDPLIB set maintained by
+- **arch0.mat**: A middle-sized SDP problem from the SDPLIB set maintained by
   Biran Borchers.  This particular problem is a truss topology design problem,
   contributed by Katsuki Fujisawa.  For details see
 
@@ -14,7 +14,7 @@ http://plato.asu.edu/sub/testcases.html.
   Optimal value is `5.66517e-01`.
 
 
-- `control07.mat`: Again from SDPLIB, a problem from control and system theory
+- **control07.mat**: Again from SDPLIB, a problem from control and system theory
   contributed by Katsuki Fujisawa.  For details see
 
   > K. Fujisawa, M. Fukuda, M. Kojima, and K. Nakata.  Numerical Evaluation
@@ -25,14 +25,14 @@ http://plato.asu.edu/sub/testcases.html.
   Optimal value is `2.06251e+01`.
 
 
-- `nb.mat`:  This problem is by Robert Vanderbei, it was used at the
+- **nb.mat**:  This problem is by Robert Vanderbei, it was used at the
   [7th DIMACS computational Challenge](http://archive.dimacs.rutgers.edu/Challenges/Seventh/).
   It is a middle-sized mixed second-order/linear problem.
 
   Optimal value is `-0.05070309`.
 
 
-- `OH_2Pi_STO-6GN9r12g1T2.mat`: This is a middle-sized SDP problem from
+- **OH_2Pi_STO-6GN9r12g1T2.mat**: This is a middle-sized SDP problem from
   electronic structure calculation.  For details see
 
   > Z. Zhao, B. J. Braams, M. Fukuda, M. L. Overton, and J. K. Percus,
@@ -43,7 +43,7 @@ http://plato.asu.edu/sub/testcases.html.
   at http://mf.c.titech.ac.jp/mituhiro/software.html.
 
 
-- `trto3.mat`: A problem by Kocvara, from single-load truss topology design.
+- **trto3.mat**: A problem by Kocvara, from single-load truss topology design.
   Normally formulated as LP, here reformulated as SDP for testing purposes.
   For details see
 
