@@ -6,9 +6,6 @@ if (nargin < 2)
   do_exit = false;
 end
 
-example_path = mfilename ('fullpath');
-example_path = example_path(1:max ([1, strfind(example_path, filesep ())]) - 1);
-
 try
   old_dir = cd ('..');
   if (do_rebuild)
