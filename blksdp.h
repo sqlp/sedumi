@@ -38,10 +38,11 @@
 #define BLKSDP
 #include "mex.h"
 #ifdef OCTAVE
-#include "f77blas.h"
+#include "f77blas.h"  /* defines "blasint" data type */
 #define FORT(x) BLASFUNC(x)
 #else /* Matlab */
 #include "blas.h"
+typedef ptrdiff_t blasint;
 /**
  * For Matlab R2019a (probably before) and newer, when including
  * "blas.h" the respective BLAS identifiers are already defined,
@@ -59,7 +60,6 @@
 #else
 #define FORT(x) x
 #endif
-typedef ptrdiff_t blasint;
 #endif
 
 /* ------------------------------------------------------------

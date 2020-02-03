@@ -38,6 +38,7 @@
 */
 
 #include "mex.h"
+#include "ordmmd.h"
 
 #define PERM_OUT plhs[0]
 
@@ -86,7 +87,7 @@ void mexFunction(const int nlhs, mxArray *plhs[],
   mxAssert(nrhs == 1, "ordmmd requires 1 input argument.");
   mxAssert(nlhs == 1, "ordmmd generates 1 output argument.");
 /* ------------------------------------------------------------
-   Check input X 
+   Check input X
    ------------------------------------------------------------ */
   mxAssert(mxIsSparse(X_IN), "Input matrix must be sparse");
   m = (int) mxGetM(X_IN);

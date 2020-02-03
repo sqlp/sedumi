@@ -4,7 +4,7 @@
 */
 
 #include <mex.h>
-typedef mwSignedIndex integer;                  /* removed "long" */
+#include "ordmmd.h"
 
 /* *********************************************************************** */
 /* *********************************************************************** */
@@ -48,7 +48,7 @@ typedef mwSignedIndex integer;                  /* removed "long" */
 
 /* *********************************************************************** */
 
-/* Subroutine */ int ordmmd_(neqns, xadj, adjncy, invp, perm, iwsiz, iwork, 
+/* Subroutine */ int ordmmd_(neqns, xadj, adjncy, invp, perm, iwsiz, iwork,
 	nofsub, iflag)
 integer *neqns, *xadj, *adjncy, *invp, *perm, *iwsiz, *iwork, *nofsub, *iflag;
 {
@@ -61,7 +61,7 @@ integer *neqns, *xadj, *adjncy, *invp, *perm, *iwsiz, *iwork, *nofsub, *iflag;
  */
 
 
-/* ********************************************************************* 
+/* *********************************************************************
 */
 
     /* Parameter adjustments */
@@ -86,7 +86,7 @@ integer *neqns, *xadj, *adjncy, *invp, *perm, *iwsiz, *iwork, *nofsub, *iflag;
     delta = 0;
     maxint = 32767;
     genmmd_(neqns, &xadj[1], &adjncy[1], &invp[1], &perm[1], &delta, &iwork[1]
-	    , &iwork[*neqns + 1], &iwork[(*neqns << 1) + 1], &iwork[*neqns * 
+	    , &iwork[*neqns + 1], &iwork[(*neqns << 1) + 1], &iwork[*neqns *
 	    3 + 1], &maxint, nofsub);
     return 0;
 
@@ -149,9 +149,9 @@ integer *neqns, *xadj, *adjncy, *invp, *perm, *iwsiz, *iwork, *nofsub, *iflag;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int genmmd_(neqns, xadj, adjncy, invp, perm, delta, dhead, 
+/* Subroutine */ int genmmd_(neqns, xadj, adjncy, invp, perm, delta, dhead,
 	qsize, llist, marker, maxint, nofsub)
-integer *neqns, *xadj, *adjncy, *invp, *perm, *delta, *dhead, *qsize, *llist, 
+integer *neqns, *xadj, *adjncy, *invp, *perm, *delta, *dhead, *qsize, *llist,
 	*marker, *maxint, *nofsub;
 {
     /* System generated locals */
@@ -341,7 +341,7 @@ L1000:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int mmdint_(neqns, xadj, adjncy, dhead, dforw, dbakw, qsize, 
+/* Subroutine */ int mmdint_(neqns, xadj, adjncy, dhead, dforw, dbakw, qsize,
 	llist, marker)
 integer *neqns, *xadj, *adjncy, *dhead, *dforw, *dbakw, *qsize, *llist, *
 	marker;
@@ -827,7 +827,7 @@ L500:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int mmdupd_(ehead, neqns, xadj, adjncy, delta, mdeg, dhead, 
+/* Subroutine */ int mmdupd_(ehead, neqns, xadj, adjncy, delta, mdeg, dhead,
 	dforw, dbakw, qsize, llist, marker, maxint, tag)
 integer *ehead, *neqns, *xadj, *adjncy, *delta, *mdeg, *dhead, *dforw, *dbakw,
 	 *qsize, *llist, *marker, *maxint, *tag;
@@ -836,7 +836,7 @@ integer *ehead, *neqns, *xadj, *adjncy, *delta, *mdeg, *dhead, *dforw, *dbakw,
     integer i__1, i__2;
 
     /* Local variables */
-    static integer node, mtag, link, mdeg0, i__, j, enode, fnode, nabor, 
+    static integer node, mtag, link, mdeg0, i__, j, enode, fnode, nabor,
 	    elmnt, istop, jstop, q2head, istrt, jstrt, qxhead, iq2, deg, deg0;
 
 
@@ -921,11 +921,11 @@ L500:
 	if (dbakw[enode] != 0) {
 	    goto L700;
 	}
-/*                            --------------------------------------- 
+/*                            ---------------------------------------
 */
-/*                            PLACE EITHER IN QXHEAD OR Q2HEAD LISTS. 
+/*                            PLACE EITHER IN QXHEAD OR Q2HEAD LISTS.
 */
-/*                            --------------------------------------- 
+/*                            ---------------------------------------
 */
 	if (dforw[enode] == 2) {
 	    goto L600;
@@ -1031,11 +1031,11 @@ L1200:
 	dbakw[node] = -(*maxint);
 	goto L1400;
 L1300:
-/*                            -------------------------------------- 
+/*                            --------------------------------------
 */
-/*                            CASE WHEN NODE IS OUTMATCHED BY ENODE. 
+/*                            CASE WHEN NODE IS OUTMATCHED BY ENODE.
 */
-/*                            -------------------------------------- 
+/*                            --------------------------------------
 */
 	if (dbakw[node] == 0) {
 	    dbakw[node] = -(*maxint);
@@ -1086,14 +1086,14 @@ L1600:
 	deg += qsize[nabor];
 	goto L2000;
 L1700:
-/*                                    ------------------------------- 
+/*                                    -------------------------------
 */
-/*                                    IF ELIMINATED, INCLUDE UNMARKED 
+/*                                    IF ELIMINATED, INCLUDE UNMARKED
 */
-/*                                    NODES IN THIS ELEMENT INTO THE 
+/*                                    NODES IN THIS ELEMENT INTO THE
 */
 /*                                    DEGREE COUNT. */
-/*                                    ------------------------------- 
+/*                                    -------------------------------
 */
 	jstrt = xadj[link];
 	jstop = xadj[link + 1] - 1;

@@ -240,7 +240,7 @@ if (need_rebuild)
   failed = false;
   olddir = cd (sedumi_path);
   for i = 1:length(targets64)
-    fprintf ('   %s:\t%s\n', mex_binaries{i}, targets64{i});
+    fprintf ('   %-16s%s\n', [mex_binaries{i}, ':'], targets64{i});
     try
       eval (sprintf (mex_template, targets64{i}));
     catch

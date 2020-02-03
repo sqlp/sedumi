@@ -39,6 +39,7 @@
 */
 
 #include "mex.h"
+#include "symfct.h"
 
 #define L_OUT plhs[0]
 #define NPAROUT 1
@@ -86,7 +87,7 @@ void getadj(mwIndex *forjc,mwIndex *forir,const mwIndex *cjc,const mwIndex *cir,
 /* ------------------------------------------------------------
    EXPANDSUB -
    ------------------------------------------------------------ */
-void expandsub( mwSize n, mwSize nsuper, 
+void expandsub( mwSize n, mwSize nsuper,
                 const mwIndex* xsuper, const mwIndex* xlindx,
                 mwIndex *Ljc, mwIndex *Lir )
 {

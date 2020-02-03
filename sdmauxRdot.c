@@ -53,6 +53,6 @@ double realdot(const double *x, const double *y, const mwIndex n)
    ************************************************************ */
 double realssqr(const double *x, const mwIndex n)
 {
-    mwIndex one=1,nn=n;
+    blasint one=1,nn=n;
     return FORT(ddot)(&nn,(double*)x,&one,(double*)x,&one);
 }

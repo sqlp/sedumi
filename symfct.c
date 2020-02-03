@@ -4,7 +4,7 @@
 */
 
 #include "mex.h"
-typedef mwSignedIndex integer;                  /* removed "long" */
+#include "symfct.h"
 
 #if !defined(max)
 #define  max(A, B)   ((A) > (B) ? (A) : (B))
@@ -74,10 +74,10 @@ typedef mwSignedIndex integer;                  /* removed "long" */
 
 /* *********************************************************************** */
 
-/* Subroutine */ int sfinit_(neqns, nnza, xadj, adjncy, perm, invp, colcnt, 
-	nnzl, nsub, nsuper, snode, xsuper, iwsiz, iwork, iflag)
-integer *neqns, *nnza, *xadj, *adjncy, *perm, *invp, *colcnt, *nnzl, *nsub, *
-	nsuper, *snode, *xsuper, *iwsiz, *iwork, *iflag;
+/* Subroutine */ int sfinit_(neqns, nnza, xadj, adjncy, perm, invp, colcnt,
+  nnzl, nsub, nsuper, snode, xsuper, iwsiz, iwork, iflag)
+integer *neqns, *nnza, *xadj, *adjncy, *perm, *invp, *colcnt, *nnzl, *nsub,
+  *nsuper, *snode, *xsuper, *iwsiz, *iwork, *iflag;
 {
     /* System generated locals */
     integer i__1;
@@ -142,13 +142,13 @@ integer *neqns, *nnza, *xadj, *adjncy, *perm, *invp, *colcnt, *nnzl, *nsub, *
 /*       COMPUTE ELIMINATION TREE AND POSTORDERING. */
 /*       ------------------------------------------ */
     etordr_(neqns, &xadj[1], &adjncy[1], &perm[1], &invp[1], &iwork[1], &
-	    iwork[*neqns + 1], &iwork[(*neqns << 1) + 1], &iwork[*neqns * 3 + 
+	    iwork[*neqns + 1], &iwork[(*neqns << 1) + 1], &iwork[*neqns * 3 +
 	    1]);
 
 /*       --------------------------------------------- */
 /*       COMPUTE ROW AND COLUMN FACTOR NONZERO COUNTS. */
 /*       --------------------------------------------- */
-    fcnthn_(neqns, nnza, &xadj[1], &adjncy[1], &perm[1], &invp[1], &iwork[1], 
+    fcnthn_(neqns, nnza, &xadj[1], &adjncy[1], &perm[1], &invp[1], &iwork[1],
 	    &snode[1], &colcnt[1], nnzl, &iwork[*neqns + 1], &iwork[(*neqns <<
 	     1) + 1], &xsuper[1], &iwork[*neqns * 3 + 1], &iwork[(*neqns << 2)
 	     + 2], &iwork[*neqns * 5 + 3], &iwork[*neqns * 6 + 4]);
@@ -217,7 +217,7 @@ integer *neqns, *nnza, *xadj, *adjncy, *perm, *invp, *colcnt, *nnzl, *nsub, *
 
 /* *********************************************************************** */
 
-/* Subroutine */ int etordr_(neqns, xadj, adjncy, perm, invp, parent, fson, 
+/* Subroutine */ int etordr_(neqns, xadj, adjncy, perm, invp, parent, fson,
 	brothr, invpos)
 integer *neqns, *xadj, *adjncy, *perm, *invp, *parent, *fson, *brothr, *
 	invpos;
@@ -757,7 +757,7 @@ integer *neqns, *invp, *invp2, *perm;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int chordr_(neqns, xadj, adjncy, perm, invp, colcnt, parent, 
+/* Subroutine */ int chordr_(neqns, xadj, adjncy, perm, invp, colcnt, parent,
 	fson, brothr, invpos)
 integer *neqns, *xadj, *adjncy, *perm, *invp, *colcnt, *parent, *fson, *
 	brothr, *invpos;
@@ -970,7 +970,7 @@ integer *neqns, *parent, *colcnt, *fson, *brothr, *lson;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int epost2_(root, fson, brothr, invpos, parent, colcnt, 
+/* Subroutine */ int epost2_(root, fson, brothr, invpos, parent, colcnt,
 	stack)
 integer *root, *fson, *brothr, *invpos, *parent, *colcnt, *stack;
 {
@@ -1151,8 +1151,8 @@ L300:
 /*    the matrix is purely diagonal, then "segment violation" *) */
 /* *********************************************************************** */
 
-/* Subroutine */ int fcnthn_(neqns, adjlen, xadj, adjncy, perm, invp, etpar, 
-	rowcnt, colcnt, nlnz, set, prvlf, level, weight, fdesc, nchild, 
+/* Subroutine */ int fcnthn_(neqns, adjlen, xadj, adjncy, perm, invp, etpar,
+	rowcnt, colcnt, nlnz, set, prvlf, level, weight, fdesc, nchild,
 	prvnbr)
 integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *etpar, *rowcnt, *
 	colcnt, *nlnz, *set, *prvlf, *level, *weight, *fdesc, *nchild, *
@@ -1306,7 +1306,7 @@ F'' OF HINBR. */
 		}
 /*                   ----------------------------------------
 ---------- */
-/*                   LOWNBR NOW BECOMES ``PREVIOUS NEIGHBOR'' 
+/*                   LOWNBR NOW BECOMES ``PREVIOUS NEIGHBOR''
 OF HINBR. */
 /*                   ----------------------------------------
 ---------- */
@@ -1591,12 +1591,10 @@ integer *neqns, *nsuper, *etpar, *snode, *xsuper;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int symfct_(neqns, adjlen, xadj, adjncy, perm, invp, colcnt, 
-	nsuper, xsuper, snode, nofsub, xlindx, lindx, xlnz, iwsiz, iwork, 
-	flag__)
-integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper, *
-	xsuper, *snode, *nofsub, *xlindx, *lindx, *xlnz, *iwsiz, *iwork, *
-	flag__;
+/* Subroutine */ int symfct_(neqns, adjlen, xadj, adjncy, perm, invp, colcnt,
+  nsuper, xsuper, snode, nofsub, xlindx, lindx, xlnz, iwsiz, iwork, flag__)
+integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper,
+  *xsuper, *snode, *nofsub, *xlindx, *lindx, *xlnz, *iwsiz, *iwork, *flag__;
 {
     extern /* Subroutine */ int symfc2_();
 
@@ -1631,8 +1629,8 @@ integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper, *
 	return 0;
     }
     symfc2_(neqns, adjlen, &xadj[1], &adjncy[1], &perm[1], &invp[1], &colcnt[
-	    1], nsuper, &xsuper[1], &snode[1], nofsub, &xlindx[1], &lindx[1], 
-	    &xlnz[1], &iwork[1], &iwork[*nsuper + 1], &iwork[*nsuper + *neqns 
+	    1], nsuper, &xsuper[1], &snode[1], nofsub, &xlindx[1], &lindx[1],
+	    &xlnz[1], &iwork[1], &iwork[*nsuper + 1], &iwork[*nsuper + *neqns
 	    + 2], flag__);
     return 0;
 } /* symfct_ */
@@ -1702,8 +1700,8 @@ integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper, *
 
 /* *********************************************************************** */
 
-/* Subroutine */ int symfc2_(neqns, adjlen, xadj, adjncy, perm, invp, colcnt, 
-	nsuper, xsuper, snode, nofsub, xlindx, lindx, xlnz, mrglnk, rchlnk, 
+/* Subroutine */ int symfc2_(neqns, adjlen, xadj, adjncy, perm, invp, colcnt,
+	nsuper, xsuper, snode, nofsub, xlindx, lindx, xlnz, mrglnk, rchlnk,
 	marker, flag__)
 integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper, *
 	xsuper, *snode, *nofsub, *xlindx, *lindx, *xlnz, *mrglnk, *rchlnk, *
@@ -1714,7 +1712,7 @@ integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper, *
 
     /* Local variables */
     static integer head, node, tail, pcol, newi, jptr, kptr, jsup, ksup, psup,
-	     i__, nzbeg, nzend, width, nexti, point, jnzbeg, knzbeg, length, 
+	     i__, nzbeg, nzend, width, nexti, point, jnzbeg, knzbeg, length,
 	    jnzend, jwidth, fstcol, knzend, lstcol, knz;
 
 
@@ -1834,12 +1832,12 @@ integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper, *
 	    jsup = mrglnk[jsup];
 L300:
 	    if (jsup != 0 && knz < length) {
-/*                   ---------------------------------------- 
+/*                   ----------------------------------------
 */
-/*                   MERGE THE INDICES OF JSUP INTO THE LIST, 
+/*                   MERGE THE INDICES OF JSUP INTO THE LIST,
 */
 /*                   AND MARK NEW INDICES WITH VALUE KSUP. */
-/*                   ---------------------------------------- 
+/*                   ----------------------------------------
 */
 		jwidth = xsuper[jsup + 1] - xsuper[jsup];
 		jnzbeg = xlindx[jsup] + jwidth;
@@ -1882,12 +1880,12 @@ L400:
 		newi = adjncy[kptr];
 		newi = invp[newi];
 		if (newi > fstcol && marker[newi] != ksup) {
-/*                       -------------------------------- 
+/*                       --------------------------------
 */
-/*                       POSITION AND INSERT NEWI IN LIST 
+/*                       POSITION AND INSERT NEWI IN LIST
 */
 /*                       AND MARK IT WITH KCOL. */
-/*                       -------------------------------- 
+/*                       --------------------------------
 */
 		    nexti = head;
 L600:
@@ -1993,7 +1991,7 @@ L8000:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int bfinit_(neqns, nsuper, xsuper, snode, xlindx, lindx, 
+/* Subroutine */ int bfinit_(neqns, nsuper, xsuper, snode, xlindx, lindx,
 	cachsz, tmpsiz, split)
 integer *neqns, *nsuper, *xsuper, *snode, *xlindx, *lindx, *cachsz, *tmpsiz, *
 	split;
@@ -2067,7 +2065,7 @@ integer *nsuper, *xsuper, *snode, *xlindx, *lindx, *tmpsiz;
     integer i__1;
 
     /* Local variables */
-    static integer iend, clen, ksup, i__, bound, ncols, width, tsize, ibegin, 
+    static integer iend, clen, ksup, i__, bound, ncols, width, tsize, ibegin,
 	    length, cursup, nxtsup;
 
 
@@ -2079,7 +2077,7 @@ integer *nsuper, *xsuper, *snode, *xlindx, *lindx, *tmpsiz;
 /* ***********************************************************************
  */
 
-/*       RETURNS SIZE OF TEMP ARRAY USED BY BLKFCT FACTORIZATION ROUTINE. 
+/*       RETURNS SIZE OF TEMP ARRAY USED BY BLKFCT FACTORIZATION ROUTINE.
 */
 /*       NOTE THAT THE VALUE RETURNED IS AN ESTIMATE, THOUGH IT IS USUALLY
  */
@@ -2185,7 +2183,7 @@ integer *neqns, *nsuper, *xsuper, *xlindx, *cachsz, *split;
     integer i__1;
 
     /* Local variables */
-    static integer kcol, used, ksup, cache, ncols, width, height, curcol, 
+    static integer kcol, used, ksup, cache, ncols, width, height, curcol,
 	    fstcol, lstcol, nxtblk;
 
 

@@ -53,7 +53,7 @@ mwIndex blkLDL(const mwIndex neqns, const mwIndex nsuper, const mwIndex *xsuper,
 void isscalarmul(double *x, double alpha, mwIndex n)
 {
     blasint one=1,nn=n;
-    FORT(dscal)(&n,&alpha,x,&one);
+    FORT(dscal)(&nn,&alpha,x,&one);
 }
 
 /* ************************************************************
@@ -170,7 +170,7 @@ void cholonBlk(double *x, double *d, mwIndex m, const mwIndex ncols, const mwInd
               INCLUDING THE DIAGONAL ENTRY.
      Lir    - Lir[0:nnz-1] ARE THE ROW INDICES OF THE NONZEROS
               OF THE FIRST COLUMN OF THE SUPERNODE.
-  OUTPUT PARAMETERS - 
+  OUTPUT PARAMETERS -
      irInv - On return, irInv[Lir[0:nnz-1]] = nnz:-1:1, so that
 		           Lir[nnz-irInv[i]]  == i
              The position of subscript "xij" is thus
@@ -314,7 +314,7 @@ void spadd(const mwIndex *xjjc, double *xnz, const mwIndex mj, const mwIndex nj,
   }
 }
 
-/* ************************************************************      
+/* ************************************************************
    PROCEDURE precorrect  -  Apply corrections from affecting supernode
       (skipping subnodes with non-positive diagonal) on supernodal
       diagonal block in L-factor.
@@ -520,7 +520,7 @@ mwIndex blkLDL(const mwIndex neqns, const mwIndex nsuper, const mwIndex *xsuper,
                                     length[k],xsuper[k],xsuper[k+1],
                                     relind,fwsiz,fwork)) == (mwIndex)-1 )
         return (mwIndex)-1;         /* fwsiz too small */
-    }	
+    }
 /* ------------------------------------------------------------
    DO DENSE CHOLESKY on the current supernode
    ------------------------------------------------------------ */
