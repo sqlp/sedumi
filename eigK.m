@@ -75,7 +75,7 @@ end
 li = 0;
 xi = nf;
 lab = zeros(N,1);
-li(li+1:li+nl) = x(xi+1:xi+nl);
+lab(li+1:li+nl) = x(xi+1:xi+nl);
 xi = xi + nl;
 li = li + nl;
 if nq,
