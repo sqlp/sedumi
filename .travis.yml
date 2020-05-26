@@ -29,4 +29,7 @@ jobs:
       script: octave --eval "cd examples; test_sedumi(1, 1);"
     - os: windows
       before_install: choco install octave.portable
-      script: octave-cli.exe --eval "cd examples; test_sedumi(1, 1);"
+      script:
+      # export suggested in https://travis-ci.community/t/octave-fails-with-cannot-open-shared-object-file/2028/2
+      - export shell="cmd.exe //C RefreshEnv.cmd & C:/tools/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -full-path -here -c \$\* --"
+      - $shell octave-cli.exe --eval "cd examples; test_sedumi(1, 1);"
