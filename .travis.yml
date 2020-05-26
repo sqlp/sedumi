@@ -19,22 +19,23 @@ jobs:
         apt:
           update: true
       script: octave --eval "cd examples; test_sedumi(1, 1);"
-    - os: osx
-      before_install:
-      - brew unlink python@2
-      - brew install octave
-      addons:
-        homebrew:
-          update: true
-      script: octave --eval "cd examples; test_sedumi(1, 1);"
+#    - os: osx
+#      before_install:
+#      - brew unlink python@2
+#      - brew install octave
+#      addons:
+#        homebrew:
+#          update: true
+#      script: octave --eval "cd examples; test_sedumi(1, 1);"
     - os: windows
       before_install: choco install octave.portable
       script:
       # export suggested in https://travis-ci.community/t/octave-fails-with-cannot-open-shared-object-file/2028/2
-      - which *octave*
-      - which *msys2_shell*
-      - cmd.exe //C RefreshEnv.cmd & which *octave*
-      - cmd.exe //C RefreshEnv.cmd & which *msys2_shell*
+      - where *octave*
+      - where *msys2_shell*
+      - cmd.exe //C RefreshEnv.cmd & where *octave*
+      - cmd.exe //C RefreshEnv.cmd & where *msys2_shell*
+      - C:\ProgramData\chocolatey\bin\octave.exe
       - cmd.exe //C RefreshEnv.cmd & C:/tools/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -full-path -here -c octave.exe
       - export shell2="cmd.exe //C RefreshEnv.cmd & C:/tools/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -full-path -here -c"
       - $shell2 octave.exe
