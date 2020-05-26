@@ -31,6 +31,10 @@ jobs:
       before_install: choco install octave.portable
       script:
       # export suggested in https://travis-ci.community/t/octave-fails-with-cannot-open-shared-object-file/2028/2
+      - which *octave*
+      - which *msys2_shell*
+      - cmd.exe //C RefreshEnv.cmd & which *octave*
+      - cmd.exe //C RefreshEnv.cmd & which *msys2_shell*
       - cmd.exe //C RefreshEnv.cmd & C:/tools/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -full-path -here -c octave.exe
       - export shell2="cmd.exe //C RefreshEnv.cmd & C:/tools/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -full-path -here -c"
       - $shell2 octave.exe
