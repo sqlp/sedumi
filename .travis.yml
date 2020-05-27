@@ -35,4 +35,4 @@ jobs:
       - dir
       - where post-install.bat
       - %cd%/post-install.bat
-      - %cd%/octave-cli.exe --eval "cd ..; cd examples; test_sedumi(1, 1);"
+      - %cd%/octave-cli.exe --eval "cd ..; cd examples; test_sedumi(1, 1); "
