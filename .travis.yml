@@ -34,5 +34,6 @@ jobs:
       - cd octave-5.2.0-w64
       - dir
       - where post-install.bat
-      - %cd%/post-install.bat
-      - %cd%/octave-cli.exe --eval "cd ..; cd examples; test_sedumi(1, 1); "
+      - ./post-install.bat
+      - "%cd%/post-install.bat"
+      - "%cd%/octave-cli.exe" --eval "cd ..; cd examples; test_sedumi(1, 1); "
