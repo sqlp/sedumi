@@ -28,13 +28,10 @@ jobs:
 #          update: true
 #      script: octave --eval "cd examples; test_sedumi(1, 1);"
     - os: windows
-      before_install: choco install octave.portable
       script:
-      # export suggested in https://travis-ci.community/t/octave-fails-with-cannot-open-shared-object-file/2028/2
-      - cmd.exe //C RefreshEnv.cmd & where *octave*
-      - cmd.exe //C RefreshEnv.cmd & C:\ProgramData\chocolatey\bin\octave.exe
-      - cmd.exe //C RefreshEnv.cmd & C:\ProgramData\chocolatey\bin\octave-cli.exe
-      #- export shell2="cmd.exe //C RefreshEnv.cmd & C:/tools/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -full-path -here -c"
-      #- export shell="cmd.exe //C RefreshEnv.cmd & C:/tools/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -full-path -here -c \$\* --"
-      #- $shell octave.exe
-      - cmd.exe //C RefreshEnv.cmd & C:\ProgramData\chocolatey\bin\octave-cli.exe --eval "cd examples; test_sedumi(1, 1);"
+      - cd
+      - curl -O https://ftpmirror.gnu.org/octave/windows/octave-5.2.0_1-w64.7z
+      - 7z e octave-5.2.0_1-w64.7z
+      - cd octave-5.2.0_1
+      - post-install.bat
+      - octave-cli.exe --eval "cd examples; test_sedumi(1, 1);"
