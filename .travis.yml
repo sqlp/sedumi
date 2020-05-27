@@ -30,7 +30,7 @@ jobs:
     - os: windows
       script:
       - cd
-      - curl -O https://ftpmirror.gnu.org/octave/windows/octave-5.2.0_1-w64.7z
+      - curl -O https://ftp.gnu.org/octave/windows/octave-5.2.0_1-w64.7z
       - 7z e octave-5.2.0_1-w64.7z
       - cd octave-5.2.0_1
       - post-install.bat
