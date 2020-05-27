@@ -31,6 +31,7 @@ jobs:
       script:
       - powershell Invoke-WebRequest -Uri https://ftpmirror.gnu.org/octave/windows/octave-5.2.0_1-w64.7z -OutFile octave-5.2.0_1-w64.7z
       - 7z e octave-5.2.0_1-w64.7z -y
+      - dir
       - cd octave-5.2.0_1
       - post-install.bat
       - octave-cli.exe --eval "cd examples; test_sedumi(1, 1);"
