@@ -33,5 +33,6 @@ jobs:
       - 7z x octave-5.2.0_1-w64.7z
       - cd octave-5.2.0-w64
       - dir
-      - start post-install.bat
-      - start octave-cli.exe --eval "cd examples; test_sedumi(1, 1);"
+      - where post-install.bat
+      - %cd%/post-install.bat
+      - %cd%/octave-cli.exe --eval "cd ..; cd examples; test_sedumi(1, 1);"
