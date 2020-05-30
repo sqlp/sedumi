@@ -19,6 +19,16 @@ jobs:
         apt:
           update: true
       script: octave --eval "cd examples; test_sedumi(1, 1);"
+    - os: linux
+      dist: bionic # 18.04 LTS, Octave 5.2.0 (snap)
+      before_install:
+      - sudo apt-get -y install snapd
+      - sudo snap install octave
+      addons:
+        apt:
+          update: true
+      script:
+      - octave --eval "cd examples; test_sedumi(1, 1);"
     - os: osx
       before_install:
       - brew unlink python@2
