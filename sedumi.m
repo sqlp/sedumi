@@ -794,7 +794,7 @@ if ~isempty(origcoeff)
         info.err(4)=0;
     end
     %     Dual infeasibility
-    %info.err(3)=0.0; %s is not maintained explicitely
+    info.err(3)=0.0; %s is not maintained explicitely
         %     Relative duality gap
     info.err(5)=(cx-by)/(1+abs(cx)+abs(by));
     %     Relative complementarity

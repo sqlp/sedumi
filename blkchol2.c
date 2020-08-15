@@ -113,7 +113,7 @@ void cholonBlk(double *x, double *d, mwIndex m, const mwIndex ncols, const mwInd
    ------------------------------------------------------- */
     xkk = x[inz];
     if(xkk > lb[k]){ /* now xkk > 0 */
-      if(xkk < ub){
+      if((m>1) && (xkk < ub)){
         ubk = maxabs(x+inz+1,m-1) / maxu;
         if(xkk < ubk){
 /* ------------------------------------------------------------

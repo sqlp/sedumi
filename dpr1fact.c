@@ -365,7 +365,7 @@ char dodpr1fact(double *beta, mwIndex *perm, double *d, double t, const double *
    ------------------------------------------------------------ */
   else{
     psqrdep = 0.0;
-    for(i = 0; dep[i] < m; i++)
+    for(i = 0, j = 0; dep[i] < m; i++)
       if(psqr[dep[i]] > psqrdep){
         j = i;
         psqrdep = psqr[dep[i]];

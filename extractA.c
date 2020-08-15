@@ -98,7 +98,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
   jcir At, Apart;
-  mwIndex i, m, njc, ifirst, n, ynnz, blk0,blk1;
+  mwIndex i, m, njc, ifirst=0, n=0, ynnz, blk0, blk1;
   mwIndex *Ajc;
   const double *blkstartPr, *AjcPr;
   bool isblk0negative;
