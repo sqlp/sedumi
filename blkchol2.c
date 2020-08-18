@@ -113,16 +113,21 @@ void cholonBlk(double *x, double *d, mwIndex m, const mwIndex ncols, const mwInd
    ------------------------------------------------------- */
     xkk = x[inz];
     if(xkk > lb[k]){ /* now xkk > 0 */
-      if((m>1) && (xkk < ub)){
+/* ------------------------------------------------------------
+   maxabs is a wrapper for the BLAS IDAMAX Fortran function.
+   IDAMAX finds the first element having maximum absolute
+   value in an array. Only call maxabs with m>1. 
+   ------------------------------------------------------------ */
+      if ((m>1) && (xkk < ub)){
         ubk = maxabs(x+inz+1,m-1) / maxu;
         if(xkk < ubk){
 /* ------------------------------------------------------------
    If we need to add on diagonal, store this in (skipIr, lb(k)).
    ------------------------------------------------------------ */
           skipIr[nskip++] = first + k;
-	  lb[k] = ubk - xkk;           /* amount added on diagonal */
-	  xkk = ubk;
-	}
+          lb[k] = ubk - xkk;           /* amount added on diagonal */
+          xkk = ubk;
+        }
       }
 /* --------------------------------------------------------------
    Set dk = xkk, lkk = 1 (for LDL').
@@ -170,7 +175,7 @@ void cholonBlk(double *x, double *d, mwIndex m, const mwIndex ncols, const mwInd
               INCLUDING THE DIAGONAL ENTRY.
      Lir    - Lir[0:nnz-1] ARE THE ROW INDICES OF THE NONZEROS
               OF THE FIRST COLUMN OF THE SUPERNODE.
-  OUTPUT PARAMETERS -
+  OUTPUT PARAMETERS - 
      irInv - On return, irInv[Lir[0:nnz-1]] = nnz:-1:1, so that
 		           Lir[nnz-irInv[i]]  == i
              The position of subscript "xij" is thus
@@ -314,7 +319,7 @@ void spadd(const mwIndex *xjjc, double *xnz, const mwIndex mj, const mwIndex nj,
   }
 }
 
-/* ************************************************************
+/* ************************************************************      
    PROCEDURE precorrect  -  Apply corrections from affecting supernode
       (skipping subnodes with non-positive diagonal) on supernodal
       diagonal block in L-factor.
@@ -520,7 +525,7 @@ mwIndex blkLDL(const mwIndex neqns, const mwIndex nsuper, const mwIndex *xsuper,
                                     length[k],xsuper[k],xsuper[k+1],
                                     relind,fwsiz,fwork)) == (mwIndex)-1 )
         return (mwIndex)-1;         /* fwsiz too small */
-    }
+    }	
 /* ------------------------------------------------------------
    DO DENSE CHOLESKY on the current supernode
    ------------------------------------------------------------ */

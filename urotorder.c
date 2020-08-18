@@ -313,7 +313,7 @@ void mexFunction(const int nlhs, mxArray *plhs[],
   const int nrhs, const mxArray *prhs[])
 {
   mxArray *myplhs[NPAROUT];
-  mwIndex i,j,k, nk, nksqr, lenud, sdplen, gnnz, inz, maxKs,maxKssqr, rgnnz, hgnnz;
+  mwIndex i, k, nk, nksqr, lenud, sdplen, gnnz, inz, maxKs,maxKssqr, rgnnz, hgnnz;
   const double *uOld, *permOld=NULL;
   double *u, *d, *gjcPr, *permPr, *fwork, *fworkpi;
   mwIndex *perm, *gjc;

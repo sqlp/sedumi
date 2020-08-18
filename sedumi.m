@@ -264,7 +264,11 @@ end
 if N*m<100000
     %Test if Ax=b is feasible at all
     %turn off the rank deficient warning for now
-    s = warning('off','MATLAB:singularMatrix');
+    if (exist ('OCTAVE_VERSION', 'builtin') == 5)
+      s = warning('off','Octave:singular-matrix');
+    else
+      s = warning('off','MATLAB:singularMatrix');
+    endif
     y=[A;b']\[zeros(N,1);1];
     if abs(y'*b-1) < 1e-10 && norm(A*y) < 1e-10
         %Infeasibility certificate found
@@ -778,8 +782,6 @@ if ~isempty(origcoeff)
     info.err(1)=norm(x'*(origcoeff.At)-(origcoeff.b)',2)/(1+normb);
     %Let us get rid of the K.f part, since the free variables don't make
     %any difference in the cone infeasibility.
-    %origcoeff.K.f=0;
-
     if origcoeff.K.f<length(origcoeff.c)
         %not all primal variables are free
         %     Primal cone infeasibility
@@ -788,14 +790,10 @@ if ~isempty(origcoeff)
         info.err(2)=max(0,-min(eigK(full(x(origcoeff.K.f+1:end)),tempK)/(1+normb)));
         %     Dual cone infeasibility
         info.err(4)=max(0,-min(eigK(full(s(origcoeff.K.f+1:end)),tempK)/(1+normc)));
-        
-    else
-        info.err(2)=0;
-        info.err(4)=0;
     end
     %     Dual infeasibility
-    info.err(3)=0.0; %s is not maintained explicitely
-        %     Relative duality gap
+    info.err(3)=0.0; % not maintained explicitly
+    %     Relative duality gap
     info.err(5)=(cx-by)/(1+abs(cx)+abs(by));
     %     Relative complementarity
     info.err(6)=xs/(1+abs(cx)+abs(by));

@@ -139,10 +139,8 @@ void vecsymPSD(double *y, const double *x,const mwIndex rsdpN,const mwIndex sdpN
 void mexFunction(const int nlhs, mxArray *plhs[],
   const int nrhs, const mxArray *prhs[])
 {
- mxArray *output_array[1], *Xk;
-
  coneK cK;
- mwIndex k, nk, nksqr, lqDim,lenfull;
+ mwIndex lqDim,lenfull;
  const double *x;
  double *y;
 

@@ -136,7 +136,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
   int nrhs, const mxArray *prhs[])
 {
   const mxArray *MY_FIELD;
-  mwIndex i,j,firstQ, m,nden, nl, nq, lorN;
+  mwIndex i,j,firstQ, m,nden, nl, nq;
+#ifdef MEX_DEBUG
+  mwIndex lorN;
+#endif
   mwIndex *q, *dencols, *blkend;
   const double *d1, *d2, *qPr, *dencolsPr, *blkstartPr;
   double *fwork;
@@ -176,7 +179,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
   mxAssert(mxIsStruct(D_IN), "d should be a structure.");
   MY_FIELD = mxGetField(D_IN,(mwIndex)0,"q1");         /* d.q1 */
   mxAssert( MY_FIELD != NULL, "Missing field d.q1.");
+#ifdef MEX_DEBUG
   lorN = mxGetM(MY_FIELD) * mxGetN(MY_FIELD);
+#endif
   d1 = mxGetPr(MY_FIELD);
   MY_FIELD = mxGetField(D_IN,(mwIndex)0,"q2");        /* d.q2 */
   mxAssert( MY_FIELD != NULL, "Missing field d.q2.");

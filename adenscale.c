@@ -88,7 +88,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
   int nrhs, const mxArray *prhs[])
 {
   const mxArray *MY_FIELD;
-  mwIndex i, j, nden, nl, nq, lorN;
+  mwIndex i, j, nden, nl, nq;
+#ifdef MEX_DEBUG
+  mwIndex lorN;
+#endif
   mwIndex *q, *dencols, *blkend;
   const double *qPr, *dencolsPr, *detd, *blkstartPr;
 /* ------------------------------------------------------------
@@ -119,7 +122,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
   MY_FIELD = mxGetField(D_IN,(mwIndex)0,"det");           /* d.det */
   mxAssert( MY_FIELD != NULL, "Missing field d.det.");
   detd = mxGetPr(MY_FIELD);
+#ifdef MEX_DEBUG
   lorN = (mwIndex) (mxGetM(MY_FIELD) * mxGetN(MY_FIELD));
+#endif
 /* ------------------------------------------------------------
    Get INPUTS blkstart
    ------------------------------------------------------------ */
