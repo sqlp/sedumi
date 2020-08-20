@@ -11,7 +11,7 @@ http://plato.asu.edu/sub/testcases.html.
   > Applied Mechanics and Engineering 94(1992):113-129.
   > DOI: [10.1016/0045-7825(92)90159-H](https://doi.org/10.1016/0045-7825(92)90159-H).
 
-  Optimal value is `5.66517e-01`.
+  Optimal value is `-5.66517e-01`.
 
 
 - **control07.mat**: Again from SDPLIB, a problem from control and system theory
@@ -22,7 +22,7 @@ http://plato.asu.edu/sub/testcases.html.
   > Department of Mathematical and Computing Sciences, Tokyo Institute of
   > Technology, September, 1997.
 
-  Optimal value is `2.06251e+01`.
+  Optimal value is `-2.06251e+01`.
 
 
 - **nb.mat**:  This problem is by Robert Vanderbei, it was used at the
@@ -39,8 +39,12 @@ http://plato.asu.edu/sub/testcases.html.
   > "The reduced density matrix method for electronic structure calculations
   > and the role of three-index representability", October, 2003.
   > DOI: [10.1063/1.1636721](https://doi.org/10.1063/1.1636721).
-
-  at http://mf.c.titech.ac.jp/mituhiro/software.html.
+  
+  and http://mf.c.titech.ac.jp/mituhiro/software.html.  The reported energy is
+  `-75.1014` substracted by the repulsion energy `4.3656986614` and negated
+  due to the problem formulation.
+  
+  Optimal value is `7.946708e+01`. 
 
 
 - **trto3.mat**: A problem by Kocvara, from single-load truss topology design.
