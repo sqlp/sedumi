@@ -93,10 +93,7 @@ void prpimatgivens(double *y,double *ypi, const tridouble *g,
 void mexFunction(const int nlhs, mxArray *plhs[],
   const int nrhs, const mxArray *prhs[])
 {
-  mwIndex inz, i, k, nk, nksqr, lenud, sdplen;
-#ifdef MEX_DEBUG
-  mwIndex gnnz;
-#endif
+  mwIndex inz, i, k, nk, nksqr, lenud, sdplen, gnnz;
   mwIndex *gjc, *iwork;
   const double *gjcPr;
   const double *g, *gk;
@@ -121,9 +118,7 @@ void mexFunction(const int nlhs, mxArray *plhs[],
    ------------------------------------------------------------ */
   gjcPr = mxGetPr(GJC_IN);
   g = (double *) mxGetPr(G_IN);
-#ifdef MEX_DEBUG
   gnnz = mxGetM(G_IN) * mxGetN(G_IN);
-#endif
   mxAssert(mxGetM(X_IN) == lenud && ( lenud == 0 || mxGetN(X_IN) == 1 ), "x size mismatch");
 /* ------------------------------------------------------------
    Allocate output y(lenud), and let y = x.

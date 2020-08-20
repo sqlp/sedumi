@@ -373,10 +373,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
   mxArray *myplhs[NPAROUT];
   coneK cK;
   const mxArray *MY_FIELD;
-  mwIndex lenud, m, i, j, k, fwsiz, iwsiz, dznnz, maxadd;
-#ifdef MEX_DEBUG
-  mwIndex lenfull;
-#endif
+  mwIndex lenfull, lenud, m, i, j, k, fwsiz, iwsiz, dznnz, maxadd;
   const double *permPr, *Ajc1Pr, *blkstartPr, *udsqr;
   const mwIndex *dzstructjc, *dzstructir;
   double *fwork, *absd;
@@ -396,9 +393,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
    Compute some statistics based on cone K structure
    ------------------------------------------------------------ */
   lenud = cK.rDim + cK.hDim;                  /* for PSD */
-#ifdef MEX_DEBUG
   lenfull = cK.lpN +  cK.qDim + lenud;
-#endif
 /* ------------------------------------------------------------
    Allocate working array blkstart(|K.s|+1).
    ------------------------------------------------------------ */

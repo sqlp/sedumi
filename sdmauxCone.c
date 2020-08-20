@@ -49,10 +49,7 @@ void conepars(const mxArray *mxK, coneK *pK)
 {
  const mxArray *K_FIELD;
  const double *blkstartPr;
- mwIndex idummy;
-#ifdef MEX_DEBUG
- mwIndex nblk;
-#endif
+ mwIndex idummy, nblk;
  char gotthem;
 
  mxAssert(mxIsStruct(mxK), "Parameter `K' should be a structure.");
@@ -113,9 +110,7 @@ void conepars(const mxArray *mxK, coneK *pK)
 	   pK->hMaxn = (mwSize) mxGetScalar(K_FIELD);
 	   if( (K_FIELD = mxGetField(mxK,(mwIndex)0,"blkstart"))!=NULL){ /*K.blkstart*/
 	     mxAssert(!mxIsSparse(K_FIELD), "K.blkstart must be a full vector.");
-#ifdef MEX_DEBUG         
          nblk = 1 + pK->lorN + pK->sdpN;
-#endif
          mxAssert(mxGetM(K_FIELD) * mxGetN(K_FIELD) == nblk + 1, "Size mismatch K.blkstart.");
 	     blkstartPr = mxGetPr(K_FIELD);
 	     pK->qDim = (mwSize) blkstartPr[pK->lorN+1] - (mwSize) blkstartPr[0];

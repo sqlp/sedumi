@@ -107,15 +107,11 @@ void psdframeit(double *x, const double *frms, const double *lab,
 void mexFunction(const int nlhs, mxArray *plhs[],
   const int nrhs, const mxArray *prhs[])
 {
-  mwIndex i,lenud;
-#ifdef MEX_DEBUG
-  mwIndex lendiag, qsize;
-#endif
+  mwIndex i,lendiag, lenfull, lenud,qsize;
   double *x, *fwork;
   const double *lab,*frms;
   mwIndex *sdpNL;
   coneK cK;
-
 /* ------------------------------------------------------------
    Check for proper number of arguments 
    ------------------------------------------------------------ */
@@ -129,10 +125,9 @@ void mexFunction(const int nlhs, mxArray *plhs[],
    Get statistics of cone K structure
    ------------------------------------------------------------ */
   lenud = cK.rDim + cK.hDim;
-#ifdef MEX_DEBUG
   qsize = lenud + cK.hLen;
+  lenfull = cK.lpN +  cK.qDim + lenud;
   lendiag = cK.lpN + 2 * cK.lorN + cK.rLen + cK.hLen;
-#endif
 /* ------------------------------------------------------------
    Get inputs lab,frms
    ------------------------------------------------------------ */

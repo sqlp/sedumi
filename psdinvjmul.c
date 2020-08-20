@@ -165,10 +165,7 @@ void psdinvjmul(double *z, const double *frms, const double *x,
 void mexFunction(const int nlhs, mxArray *plhs[],
   const int nrhs, const mxArray *prhs[])
 {
- mwIndex i, lenud;
-#ifdef MEX_DEBUG
- mwIndex lenfull, lendiag, qsize;
-#endif
+ mwIndex i, lenfull, lendiag, lenud, qsize;
  double *z, *fwork;
  const double *x,*y, *frms;
  mwIndex *sdpNL;
@@ -186,11 +183,9 @@ void mexFunction(const int nlhs, mxArray *plhs[],
    Get statistics of cone K structure
    ------------------------------------------------------------ */
  lenud = cK.rDim + cK.hDim;
-#ifdef MEX_DEBUG
  qsize = lenud + cK.hLen;
  lenfull = cK.lpN +  cK.qDim + lenud;
  lendiag = cK.lpN + 2 * cK.lorN + cK.rLen + cK.hLen;
-#endif
 /* ------------------------------------------------------------
    Get inputs x, frm, y.
    ------------------------------------------------------------ */

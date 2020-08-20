@@ -95,10 +95,7 @@ void prpiqdivv(double *y,double *ypi, const double *q,const double *qpi,
 void mexFunction(const int nlhs, mxArray *plhs[],
   const int nrhs, const mxArray *prhs[])
 {
-  mwIndex k, nk, nksqr, lenud, diagskip;
-#ifdef MEX_DEBUG
-  mwIndex lendiag;
-#endif
+  mwIndex i,k, nk, nksqr, lenud, lendiag, diagskip;
   double *y;
   const double *q,*v;
   coneK cK;
@@ -116,9 +113,7 @@ void mexFunction(const int nlhs, mxArray *plhs[],
    ------------------------------------------------------------ */
   lenud = cK.rDim + cK.hDim;
   diagskip = cK.lpN + 2 * cK.lorN;         /* diag for LP and Lorentz */
-#ifdef MEX_DEBUG
   lendiag = diagskip + cK.rLen + cK.hLen;
-#endif
 /* ------------------------------------------------------------
    Get inputs v, q
    ------------------------------------------------------------ */
