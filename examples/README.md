@@ -39,12 +39,12 @@ http://plato.asu.edu/sub/testcases.html.
   > "The reduced density matrix method for electronic structure calculations
   > and the role of three-index representability", October, 2003.
   > DOI: [10.1063/1.1636721](https://doi.org/10.1063/1.1636721).
-  
+
   and http://mf.c.titech.ac.jp/mituhiro/software.html.  The reported energy is
-  `-75.1014` substracted by the repulsion energy `4.3656986614` and negated
+  `-75.1014` subtracted by the repulsion energy `4.3656986614` and negated
   due to the problem formulation.
-  
-  Optimal value is `7.946708e+01`. 
+
+  Optimal value is `7.946708e+01`.
 
 
 - **trto3.mat**: A problem by Kocvara, from single-load truss topology design.

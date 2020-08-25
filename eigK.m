@@ -50,7 +50,7 @@ function lab = eigK(x,K)
 % 02110-1301, USA
 %
 
-if isfield(K,'rsdpN'),
+if isfield(K,'rsdpN')
     % The internal SeDuMi cone format.
     is_int = true;
     nf = 0;
@@ -78,14 +78,14 @@ lab = zeros(N,1);
 lab(li+1:li+nl) = x(xi+1:xi+nl);
 xi = xi + nl;
 li = li + nl;
-if nq,
+if nq
     tmp = sqrt(0.5);
-    if is_int,
+    if is_int
         % Internal version: all of the x0 values are at the front, and the
         % vectors are stacked in order after that.
         zi = xi;
         xi = xi + nq;
-        for i = 1:nq,
+        for i = 1:nq
             kk = K.q(i) - 1;
             x0 = x(zi+i);
             lab(li+1:li+2) = tmp*(x0+[-1;+1]*norm(x(xi+1:xi+kk)));
@@ -102,7 +102,7 @@ if nq,
         end
     end
 end
-for i = 1:nr,
+for i = 1:nr
     % Only the external format needs to be implemented here
     ki = K.r(i);
     x1 = xx(xi+1);
@@ -111,12 +111,12 @@ for i = 1:nr,
     xi = xi + ki;
     li = li + 2;
 end
-for i = 1 : ns,
+for i = 1 : ns
     ki = K.s(i);
     qi = ki * ki;
     XX = x(xi+1:xi+qi); 
     xi = xi + qi;
-    if i > nrsdp,
+    if i > nrsdp
         XX = XX + 1i*x(xi+1:xi+qi); 
         xi = xi + qi;
     end

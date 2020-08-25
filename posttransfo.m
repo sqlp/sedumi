@@ -1,4 +1,4 @@
-function [x,y,K] = posttransfo(x,y,prep,K,pars)
+function [x,y,K] = posttransfo(x,y,prep,K,~)
 % [xp,yp] = posttransfo(x,y,prep,K)
 %
 % POSTTRANSFO  Transforms (x,y) from internal SeDuMi format into original
@@ -44,7 +44,7 @@ function [x,y,K] = posttransfo(x,y,prep,K,pars)
 % heavy lifting has been accomplished by the QR matrix.
 K.l = K.l - 1;
 x = (x'*prep.QR)';
-if ~isempty(K.ycomplex),
+if ~isempty(K.ycomplex)
     ylen = length(y) - length(K.ycomplex);
     y = y(1:ylen) + 1j * sparse(K.ycomplex,1,y(ylen+1:length(y)),ylen,1);
 end

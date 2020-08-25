@@ -1,7 +1,7 @@
 function sedumi_binary_error()
 %Throw an error indicating the sedumi binaries are not available
 
-if exist('OCTAVE_VERSION','builtin'),
+if exist('OCTAVE_VERSION','builtin')
     software = 'Octave';
 else
     software = 'Matlab';

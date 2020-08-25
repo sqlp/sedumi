@@ -85,7 +85,7 @@ dense.l = length(find(dense.cols < i1));            %dense LP cols.
 % The number of dense columns should be small relative to
 % the number of constraints - otherwise we better do 1 full Chol.
 % ----------------------------------------
-if length(dense.cols) > m / 2;
+if length(dense.cols) > m / 2
     dense.l = 0; dense.cols = []; dense.q = [];
 end
 if isempty(dense.q)

@@ -143,7 +143,7 @@ else
         error('Elements of K.xcomplex are out of range');
     end
 end
-if L_z,
+if L_z
     K.s = [ K.s, K.z ];
     K.scomplex = [ K.scomplex, L_s + 1 : L_sz ];
     K.z = zeros(1,0);
@@ -167,20 +167,20 @@ end
 
 if ndims(At) > 2 %#ok
     error('A must be a matrix');
-elseif nnz(isnan(At)) || nnz(isinf(At)),
+elseif nnz(isnan(At)) || nnz(isinf(At))
     error('A contains NaN or Inf');
-elseif size(At,1) == N,
+elseif size(At,1) == N
     % nothing
-elseif size(At,2) == N,
+elseif size(At,2) == N
     At = At';
 else
     error('(At,K) size mismatch');
 end
 if all(size(b)>1)
     error('Parameter b must be a vector');
-elseif any(isnan(b)) || any(isinf(b)),
+elseif any(isnan(b)) || any(isinf(b))
     error('b contains NaN or Inf');
-elseif length(b) ~= size(At,2),
+elseif length(b) ~= size(At,2)
     error('(At,b) size mismatch');
 else
     b = b(:);
@@ -228,7 +228,7 @@ end
 % an LMI, potentially breaking a larger into smaller ones. But this would
 % likely be significantly more expensive.
 
-if L_s && ( ~isfield(pars,'sdp') || pars.sdp ),
+if L_s && ( ~isfield(pars,'sdp') || pars.sdp )
     ssiz        = (K.s).^2;
     strt        = cumsum([1,ssiz(1:end-1)]);
     sblk        = zeros(1,N_s);
@@ -269,7 +269,7 @@ end
 
 % This code replaces whichcpx.c in its entirety. It actually fixes a bug in
 % rotated Lorentz cone handling that was probably never exercised.
-if isempty(K.xcomplex) && isempty(K.scomplex),
+if isempty(K.xcomplex) && isempty(K.scomplex)
     K.fcplx = zeros(1,0);
     K.qcplx = zeros(1,0);
     K.rcplx = zeros(1,0);
@@ -288,7 +288,7 @@ else
     xc = xc(~tt) - N_q;
     tt = xc <= N_r;
     K.rcplx = xc(tt);
-    if ~isempty(K.qcplx),
+    if ~isempty(K.qcplx)
         ndxs = cumsum([1,K.q(1:end-1)]);
         t2 = any(bsxfun(@eq,K.qcplx,ndxs'),1);
         K.fcplx = [ K.fcplx, K.qcplx(t2) + N_fl ];
@@ -298,7 +298,7 @@ else
         K.qcplx = K.qcplx + (1:length(K.qcplx));
         N_q = N_q + length(K.qcplx);
     end
-    if ~isempty(K.rcplx),
+    if ~isempty(K.rcplx)
         ndxs = cumsum([1,K.r(1:end-1)]);
         t2 = any(bsxfun(@eq,K.rcplx,[ndxs,ndxs+1]'),1);
         K.fcplx = [ K.fcplx, K.rcplx(t2) + N_fl + N_q ];
@@ -312,8 +312,6 @@ else
     end
     N_fc = length(K.fcplx);
     N_f  = N_f + N_fc;
-    N_fl = N_f + N_l; %#ok
-    N_qr = N_q + N_r;
     scplx = false(1,L_s);
     scplx(K.scomplex&~sdiag) = true;
     sreal = ~scplx & ~sdiag;
@@ -338,10 +336,10 @@ newQ = zeros(1,0);
 ii = {}; jj = {}; vv = {};
 
 % Split free variables into the difference of nonnegatives
-if ~isfield( pars, 'free' ) || pars.free == 2 && L_qrsz,
+if ~isfield( pars, 'free' ) || pars.free == 2 && L_qrsz
     pars.free = 1;
 end
-if N_f && ~pars.free,
+if N_f && ~pars.free
     jt = [ 1 : K.f, K.fcplx ; 1 : K.f, K.fcplx ];
     vt = [ ones(1,K.f), -1j*ones(1,N_fc) ; -ones(1,K.f), 1j*ones(1,N_fc) ];
     ii{end+1} = 1 : 2 * N_f;
@@ -352,7 +350,7 @@ if N_f && ~pars.free,
 end
 
 % Copy nonnegative variables without change
-if K.l,
+if K.l
     ii{end+1} = newL + 1 : newL + K.l;
     jj{end+1} = K.f + 1 : K.f + K.l;
     vv{end+1} = ones(1,K.l);
@@ -360,7 +358,7 @@ if K.l,
 end
 
 % Convert diagonal SDPs to nonnegative variables
-if any(sdiag),
+if any(sdiag)
     dsize = K.s(sdiag);
     sdpL = sum(dsize);
     prep.sdiag = dsize;
@@ -378,7 +376,7 @@ end
 % Stuff free variables into a Lorentz cone
 tr_off = newL;
 nb_off = newL + L_qr;
-if N_f && pars.free,
+if N_f && pars.free
     tr_off = tr_off + 1;
     nb_off = nb_off + 1;
     ii{end+1} = nb_off + 1 : nb_off + N_f;
@@ -389,14 +387,14 @@ if N_f && pars.free,
 end
 
 % Rearrange Lorentz cones to trace block + norm-bound blocks
-if N_q,
+if N_q
     ndxs      = cumsum([1,K.q(1:end-1)]);
     it        = zeros(1,N_q);
     it(ndxs)  = tr_off + 1 : tr_off + L_q;
     it(it==0) = nb_off + 1 : nb_off + ( N_q - L_q );
     jt = K.f + K.l + 1 : K.f + K.l + N_q;
     vt = ones(1,N_q);
-    if ~isempty(K.qcplx),
+    if ~isempty(K.qcplx)
         jt = jt - cumsum(full(sparse(1,K.qcplx,1,1,N_q)));
         vt(K.qcplx) = -1j;
     end
@@ -409,7 +407,7 @@ end
 
 % Transform rotated Lorentz cones to standard Lorentz cones, and rearrange
 % to trace block + norm-bound blocks.
-if N_r,
+if N_r
     ndxr       = cumsum([1,K.r(1:end-1)]);
     ndxp       = ndxr + 2*(0:L_r-1); 
     it         = zeros(1,N_r+2*L_r);
@@ -423,7 +421,7 @@ if N_r,
     vt = ones(1,N_r+2*L_r);
     vt([ndxp,ndxp+1,ndxp+2]) = sqrt(0.5);
     vt(ndxp+3) = -sqrt(0.5);
-    if ~isempty(K.rcplx),
+    if ~isempty(K.rcplx)
         jt(K.rcplx) = 0;
         vt(K.rcplx) = -1j;
     end
@@ -435,7 +433,7 @@ end
 
 % Replace non-diagonal real SDP coefficients with tril(X) + tril(X',-1).
 % This cuts the number of nonzeros approximately in half.
-if K.rsdpN,
+if K.rsdpN
     dsize = K.s(sreal);
     sdpL  = sum(dsize.^2);
     jstrt = cumsum([N_flqr+1,K.s(1:end-1).^2]);
@@ -458,7 +456,7 @@ end
 % Replace Hermitian SDP coefficients with tril(X) + tril(X',-1). This one's
 % a bit trickier because we have the real and complex values interleaved, 
 % and the imaginary values along the diagonal are zero.
-if K.rsdpN < length(K.s),
+if K.rsdpN < length(K.s)
     dsize = K.s(scplx);
     jsize = dsize .^ 2;
     sdpL  = 2 * sum(jsize);

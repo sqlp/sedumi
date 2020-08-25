@@ -42,7 +42,7 @@ function x = eyeK(K)
 
 % The existence of rsdpN is code for 'is this the internal format?'
 is_int = isfield(K,'rsdpN');
-if is_int,
+if is_int
     N = K.N;
 else
     N = 0;
@@ -55,15 +55,15 @@ else
 end
 x = zeros(N,1);
 xi = 0;
-if ~is_int && isfield(K,'f'),
+if ~is_int && isfield(K,'f')
     xi = xi + K.f;
 end
-if isfield(K,'l'),
+if isfield(K,'l')
     x(xi+1:xi+K.l) = 1;
     xi = xi + K.l;
 end
-if isfield(K,'q') && ~isempty(K.q),
-    if is_int,
+if isfield(K,'q') && ~isempty(K.q)
+    if is_int
         % Internal version: all of the x0 values are at the front, and the
         % vectors are stacked in order after that.
         x(xi+1:xi+length(K.q)) = sqrt(2.0);
@@ -73,28 +73,28 @@ if isfield(K,'q') && ~isempty(K.q),
     end
     xi = xi + sum(K.q);
 end
-if ~is_int && isfield(K,'r') && ~isempty(K.r),
+if ~is_int && isfield(K,'r') && ~isempty(K.r)
     tmp = K.r(1:end-1);
     tmp = cumsum([1;tmp(:)]);
     x([tmp;tmp+1]) = 1;
     xi = xi + sum(K.r);
 end
-if isfield(K,'s') && ~isempty(K.s),
+if isfield(K,'s') && ~isempty(K.s)
     nc = length(K.s);
-    if is_int,
+    if is_int
         nr = K.rsdpN;
     else
         nr = nc;
     end
-    for i = 1 : nc,
+    for i = 1 : nc
         ki = K.s(i);
         qi = ki * ki;
         x(xi+1:ki+1:xi+qi) = 1.0;
         xi = xi + ((1+(i>nr))*qi);
     end
 end
-if ~is_int && isfield(K,'z') && ~isempty(K.z),
-    for i = 1 : length(K.z),
+if ~is_int && isfield(K,'z') && ~isempty(K.z)
+    for i = 1 : length(K.z)
         ki = K.z(i);
         qi = ki * ki;
         x(xi+1:ki+1:xi+qi) = 1.0;

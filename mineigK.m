@@ -11,16 +11,16 @@ function lab = mineigK(x,K)
 % Copyright (C) 2013 Michael C. Grant.
 
 xi = 0;
-if isfield(K,'f'),
+if isfield(K,'f')
     xi = xi + K.f;
 end
-if isfield(K,'l') && K.l > 0,
+if isfield(K,'l') && K.l > 0
     lab = min(x(xi+1:xi+K.l));
     xi = xi+K.l;
 else
     lab = Inf;
 end
-if isfield(K,'q') && ~isempty(K.q),
+if isfield(K,'q') && ~isempty(K.q)
     scl = sqrt(0.5);
     for k = 1:length(K.q)
         kk = K.q(k);
@@ -28,7 +28,7 @@ if isfield(K,'q') && ~isempty(K.q),
         xi = xi + kk;
     end
 end
-if isfield(K,'r') && ~isempty(K.r),
+if isfield(K,'r') && ~isempty(K.r)
     % This is a simpler formula than the one found in eigK.c. In theory
     % there could be cancellation error in the smaller eigenvalue. But 
     % the rotated Lorentz vector is not used internally where this
@@ -40,23 +40,23 @@ if isfield(K,'r') && ~isempty(K.r),
         lab = min(lab,0.5*(x1+x2-norm([x1-x2;2*x(xi+3:xi+kk)])));
     end
 end
-if isfield(K,'s') && ~isempty(K.s),
+if isfield(K,'s') && ~isempty(K.s)
     Ks = K.s;
     Kq = K.s .* K.s;
     nc = length(Ks);
     OPTS.disp=0;
     % When used internally, Hermitian terms are broken apart into real and
     % imaginary halves, so we need to catch this.
-    if isfield(K,'rsdpN'),
+    if isfield(K,'rsdpN')
         nr = K.rsdpN;
     else
         nr = nc;
     end
-    for i = 1 : nc,
+    for i = 1 : nc
         ki = Ks(i);
         qi = Kq(i);
         XX = x(xi+1:xi+qi); xi=xi+qi;
-        if i > nr,
+        if i > nr
             XX = XX + 1i*x(xi+1:xi+qi); xi=xi+qi;
         end
         XX = reshape(XX,ki,ki);

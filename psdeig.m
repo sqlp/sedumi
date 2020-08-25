@@ -40,7 +40,7 @@ function [lab,q] = psdeig(x,K)
 % 02110-1301, USA
 
 Ks = K.s;
-if isempty(Ks),
+if isempty(Ks)
     lab = [];
     return
 end
@@ -52,23 +52,23 @@ xi  = length(x) - N;
 ei  = 0;
 lab = zeros(sum(Ks),1);
 needv = nargout > 1;
-if needv,
+if needv
     q = zeros(N,1);
     vi = 0;
 end
-for i = 1 : nc,
+for i = 1 : nc
     ki = Ks(i);
     qi = Kq(i);
     XX = x(xi+1:xi+qi); 
     xi = xi+qi;
-    if i > nr,
+    if i > nr
         XX = XX + 1i*x(xi+1:xi+qi); 
         xi = xi+qi;
     end
     XX = reshape(XX,ki,ki);
     XX = XX + XX';
     try
-        if needv,
+        if needv
             [QQ,DD] = eig(XX);
             DD = diag(DD);
         else
@@ -82,10 +82,10 @@ for i = 1 : nc,
     end
     lab(ei+1:ei+ki) = 0.5*DD;
     ei = ei + ki;
-    if needv,
+    if needv
         q(vi+1:vi+qi) = real(QQ);
         vi = vi + qi;
-        if i > nr,
+        if i > nr
             q(vi+1:vi+qi) = imag(QQ);
             vi = vi + qi;
         end

@@ -27,7 +27,7 @@ function lab = maxeigK(x,K)
 %
 
 % The existence of rsdpN is code for 'is this the internal format?'
-if isfield(K,'rsdpN'),
+if isfield(K,'rsdpN')
     % The internal SeDuMi cone format.
     is_int = true;
     nf = 0;
@@ -48,14 +48,14 @@ end
 xi = nf;
 lab = max([-Inf;x(xi+1:xi+nl)]);
 xi = xi + nl;
-if nq,
+if nq
     tmp = sqrt(0.5);
-    if is_int,
+    if is_int
         % Internal version: all of the x0 values are at the front, and the
         % vectors are stacked in order after that.
         zi = xi;
         xi = xi + nq;
-        for i = 1:nq,
+        for i = 1:nq
             kk = K.q(i) - 1;
             x0 = x(zi+i);
             lab = max(lab,tmp*(x0+norm(x(xi+1:xi+kk))));
@@ -70,7 +70,7 @@ if nq,
         end
     end
 end
-for i = 1:nr,
+for i = 1:nr
     % Only the external format need be implemented here
     ki = K.r(i);
     x1 = xx(xi+1);
@@ -78,19 +78,19 @@ for i = 1:nr,
     lab = max(lab,0.5*(x1+x2+norm([x1-x2;2*x(xi+3:xi+ki)])));
     xi = xi + ki;
 end
-if ns,
-    for i = 1 : ns,
+if ns
+    for i = 1 : ns
         ki = K.s(i);
         qi = ki * ki;
         XX = x(xi+1:xi+qi); 
         xi = xi + qi;
-        if i > nrsdp,
+        if i > nrsdp
             XX = XX + 1i*x(xi+1:xi+qi); 
             xi = xi + qi;
         end
         XX = reshape(XX,ki,ki);
         XX = XX + XX';
-        if ki > 500,
+        if ki > 500
             if nnz(XX) < 0.1 * numel(XX), XX = sparse(XX); end
             [v,val,flag] = eigs(XX,1,'LA',struct('issym',true)); %#ok
             if flag, val = max(eig(XX)); end

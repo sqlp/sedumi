@@ -45,7 +45,7 @@ function mineig = minpsdeig(x,K)
 % error(' ')
 
 Ks = K.s;
-if isempty(Ks),
+if isempty(Ks)
     mineig = [];
     return
 end
@@ -54,18 +54,18 @@ nr = K.rsdpN;
 nc = length(Ks);
 xi = length(x) - sum(Kq) - sum(Kq(nr+1:end));
 eigv = zeros(nc,1);
-for i = 1 : nc,
+for i = 1 : nc
     ki = Ks(i);
     qi = Kq(i);
     XX = x(xi+1:xi+qi);
     xi = xi + qi;
-    if i > nr,
+    if i > nr
         XX = XX + 1j*x(xi+1:xi+qi);
         xi = xi + qi;
     end
     XX = reshape(XX,ki,ki);
     XX = XX + XX';
-    if ki > 500,
+    if ki > 500
         if nnz(XX) < 0.1 * numel(XX), XX = sparse(XX); end
         [v,eigv(i),flag] = eigs(XX,1,'SA',struct('issym',true)); %#ok
         if flag, eigv(i) = min(eig(XX)); end

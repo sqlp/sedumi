@@ -268,7 +268,7 @@ if N*m<100000
       s = warning('off','Octave:singular-matrix');
     else
       s = warning('off','MATLAB:singularMatrix');
-    endif
+    end
     y=[A;b']\[zeros(N,1);1];
     if abs(y'*b-1) < 1e-10 && norm(A*y) < 1e-10
         %Infeasibility certificate found
@@ -335,16 +335,16 @@ my_fprintf(pars.fid,'theta = %5.3f, beta = %5.3f\n',pars.theta,pars.beta);
 % Print preprocessing information
 % --------------------------------------------------
 if pars.prep==1
-    if isfield(prep,'sdiag'),
+    if isfield(prep,'sdiag')
         my_fprintf(pars.fid,'Detected %i diagonal SDP block(s) with %i linear variables\n',nnz(prep.sdiag),sum(prep.sdiag));
     end
     if isfield(prep,'freeblock1') && ~isempty(prep.freeblock1)
         my_fprintf(pars.fid,'Detected %i free variables in the linear part\n',length(prep.freeblock1));
     end
-    if isfield(prep,'freeL'),
+    if isfield(prep,'freeL')
         my_fprintf(pars.fid,'Split %i free variables\n',prep.freeL);
     end
-    if isfield(prep,'freeQ'),
+    if isfield(prep,'freeQ')
         my_fprintf(pars.fid,'Put %i free variables in a quadratic cone\n',prep.freeQ);
     end
 end
@@ -659,7 +659,7 @@ if x0 > 0
     else                       % Optimization problem
         r0 = (cx-by)/(abs(by) + 1E-5 * (x0+abscx));
     end
-    if r0 == 0,
+    if r0 == 0
         sigdig = Inf;
     else
         sigdig = -log10(r0);

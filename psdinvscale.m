@@ -38,7 +38,7 @@ function y = psdinvscale(ud,x,K)
 % 02110-1301, USA
 
 Ks = K.s;
-if isempty(Ks),
+if isempty(Ks)
     y = [];
     return
 end
@@ -50,30 +50,30 @@ y  = zeros(N,1);
 xi = length(x) - N;
 yi = 0;
 ui = 0;
-for i = 1 : nc,
+for i = 1 : nc
     ki = Ks(i);
     qi = Kq(i);
     TT = ud(ui+1:ui+qi); 
     ui = ui+qi;
-    if i > nr,
+    if i > nr
         TT = TT + 1i*ud(ui+1:ui+qi); 
         ui = ui+qi;
     end
     TT = triu(reshape(TT,ki,ki));
     XX = x(xi+1:xi+qi); 
     xi = xi+qi;
-    if i > nr,
+    if i > nr
         XX = XX + 1i*x(xi+1:xi+qi); 
         xi = xi+qi;
     end
     XX = reshape(XX,ki,ki);
-    if nnz(XX) < 0.1 * qi,
+    if nnz(XX) < 0.1 * qi
         XX = sparse(XX);
     end
     XX = TT \ ( XX / TT' );
     y(yi+1:yi+qi) = real(XX); 
     yi = yi+qi;
-    if i > nr,
+    if i > nr
         XX = imag(XX);
         % Needed, otherwise psdfactor() will sometimes fail.
         XX(1:ki+1:end) = 0;

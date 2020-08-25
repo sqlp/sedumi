@@ -42,16 +42,16 @@ function [dx,dy,dz,dy0, err] = sddir(L,Lden,Lsd,pv,...
 % ------------------------------------------------
 % dy0 = v'*pv,    ADp = A*D(d)*pv
 % ------------------------------------------------
-switch pMode,
-    case 1,
+switch pMode
+    case 1
         % Spectral values w.r.t. vfrm
         dy0 = (vfrm.lab'*pv) / R.b0;
         pv = frameit(pv,vfrm.q,vfrm.s,K);       % Let p = VFRM * p.
-    case 2,
+    case 2
         % Affine scaling
         dy0 = -y0;
         pv = -v;
-    case 3,
+    case 3
         dy0 = (v'*pv) / R.b0;
 end
 % ------------------------------------------------------------

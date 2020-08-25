@@ -47,7 +47,7 @@ end
 detx = labx(1:lorN) .* labx(lorN+1:end);
 x = qframeit(labx,frmx,K);
 ix = K.mainblks;
-if length(b) == ix(3)-ix(1);   % lorentz only ?
+if length(b) == ix(3)-ix(1)   % lorentz only ?
     ix = (1-ix(1)) + ix;
 end
 % ------------------------------------------------------------

@@ -175,6 +175,7 @@ if (need_rebuild)
       % whereas calling '-O' would result in gcc '-O1'.
       flags{end+1} = '-O2';
       flags{end+1} = '-DOCTAVE';
+      flags{end+1} = '-Wall';
       if (ismac ())
         % Assume Homebrew (https://brew.sh/) installation.
         % https://stackoverflow.com/questions/50634727/dyld-library-not-loaded-usr-local-opt-openblas-lib-libopenblasp-r0-2-20-dylib

@@ -43,11 +43,11 @@ function y = psdscale(ud,x,K,transp)
 %change, that is why we have so many subcases.
 
 Ks = K.s;
-if isempty(Ks),
+if isempty(Ks)
     y = [];
     return
 end
-if nargin < 4,
+if nargin < 4
     transp = false;
 end
 Kq = Ks .* Ks;
@@ -60,7 +60,7 @@ yi = 0;
 ui = 0;
 if isstruct(ud)
     perm = ud.perm;
-    if isempty(perm),
+    if isempty(perm)
         prep = false;
         postp = false;
     else
@@ -73,43 +73,43 @@ else
     prep  = false;
     postp = false;
 end
-for i = 1 : nc,
+for i = 1 : nc
     ki = Ks(i);
     qi = Kq(i);
     TT = ud(ui+1:ui+qi); ui=ui+qi;
-    if i > nr,
+    if i > nr
         TT = TT + 1i*ud(ui+1:ui+qi); ui=ui+qi;
     end
     TT = reshape(TT,ki,ki);
-    if transp,
+    if transp
         TT = triu(TT);
     else
         TT = tril(TT);
     end
     XX = x(xi+1:xi+qi); xi=xi+qi;
-    if i > nr,
+    if i > nr
         XX = XX + 1i*x(xi+1:xi+qi); xi=xi+qi;
     end
     XX = reshape(XX,ki,ki);
-    if prep,
+    if prep
         PP = perm(pi+1:pi+ki); pi=pi+ki;
-        if any(diff(PP)~=1),
+        if any(diff(PP)~=1)
             XX = XX(PP,PP);
         end
     end
-    if nnz(XX) < 0.1 * qi,
+    if nnz(XX) < 0.1 * qi
         XX = sparse(XX);
     end
     XX = TT' * XX * TT;
-    if postp,
+    if postp
         PP = perm(pi+1:pi+ki); pi=pi+ki;
-        if any(diff(PP)~=1),
+        if any(diff(PP)~=1)
             XX(PP,PP) = XX;
         end
     end
     y(yi+1:yi+qi) = real(XX); 
     yi = yi+qi;
-    if i > nr,
+    if i > nr
         XX = imag(XX);
         % Needed, otherwise psdfactor() will sometimes fail.
         XX(1:ki+1:end) = 0;

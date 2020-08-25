@@ -42,7 +42,7 @@ function [ux,ispos] = psdfactor(x,K)
 % error(' ')
 
 Ks = K.s;
-if isempty(Ks),
+if isempty(Ks)
     ux = zeros(0,1);
     ispos = true;
     return
@@ -54,25 +54,25 @@ N  = sum(Kq) + sum(Kq(nr+1:end));
 ux = zeros(N,1);
 xi = length(x) - N;
 ui = 0;
-for i = 1 : nc,
+for i = 1 : nc
     ki = Ks(i);
     qi = Kq(i);
     XX = x(xi+1:xi+qi);
     xi = xi + qi;
-    if i > nr,
+    if i > nr
         XX = XX + 1j*x(xi+1:xi+qi);
         xi = xi + qi;
     end
     XX = reshape(XX,ki,ki);
     [XX,flag]=chol(XX,'lower');
-    if flag,
+    if flag
         ispos = false;
         return
     end
     XX = XX + tril(XX,-1)';
     ux(ui+1:ui+qi) = real(XX);
     ui = ui + qi;
-    if i > nr,
+    if i > nr
         ux(ui+1:ui+qi) = imag(XX);
         ui = ui + qi;
     end
