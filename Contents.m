@@ -44,3 +44,4 @@
 %   cellK       -  Transforms x-solution into a cell array
 %
 % See also conversion.
+

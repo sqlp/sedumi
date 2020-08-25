@@ -95,7 +95,7 @@ void prpiqdivv(double *y,double *ypi, const double *q,const double *qpi,
 void mexFunction(const int nlhs, mxArray *plhs[],
   const int nrhs, const mxArray *prhs[])
 {
-  mwIndex i,k, nk, nksqr, lenud, lendiag, diagskip;
+  mwIndex k, nk, nksqr, lenud, lendiag, diagskip;
   double *y;
   const double *q,*v;
   coneK cK;

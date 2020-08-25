@@ -76,6 +76,7 @@ mwIndex realdmulx(double *y, mwIndex *ycols, const double *d,
 {
   mwIndex knz, jfirst, jlast, inz, i, j;
   knz = 0;        /* length(ycols) */
+  jfirst = 0;
   jlast = 0;      /* index right after last activated column */
   y -= n;         /* point to dummy column, which will be skipped */
 /* ------------------------------------------------------------
@@ -133,6 +134,7 @@ mwIndex cpxdmulx(double *y, mwIndex *ycols, const double *d,
   const double *dpi;
   char found;
   knz = 0;        /* length(ycols) */
+  jfirst = 0;
   jlast = 0;      /* index right after last activated column */
   nsqr = SQR(n);
   dpi = d + nsqr;
@@ -251,7 +253,7 @@ void sprealdxd(double *z, const mwIndex *zir, const mwIndex znnz,
 {
   mwIndex inz, i, icol, j, jfirst, jlast, m;
   double *xd;
-  const double *dj, *xdj;
+  const double *dj=NULL, *xdj=NULL;
 /* ------------------------------------------------------------
    Partition 2*n^2 WORKING array fwork into [fwork(n^2), xd(n^2)].
    ------------------------------------------------------------ */
@@ -276,6 +278,7 @@ void sprealdxd(double *z, const mwIndex *zir, const mwIndex znnz,
    zij = (D*sym(X)*D)_ij = [ DXD_ij + DXD_ji ] /2.
    Note that DXD_ij = xd(:,i)' * fwork(:,j).   (m mults)
    ------------------------------------------------------------ */
+  jfirst = 0;
   jlast = 0;      /* index right after last activated column */
   for(inz = 0; inz < znnz; inz++){
     if((i = zir[inz]) >= jlast){      /* move to new z-column */
@@ -334,7 +337,8 @@ void spcpxdxd(double *z, const mwIndex *zir, const mwIndex znnz,
   mwIndex inz, i, icol, j, jfirst, jlast, m, nsqr, imgfirst;
   double *dx, *dxpi, *fworkpi;
   double zi;
-  const double *dj, *djpi, *djx, *djxpi;
+  const double *dj=NULL, *djpi=NULL, *djx=NULL, *djxpi=NULL;
+  jfirst = 0;
   nsqr = SQR(n);
 /* ------------------------------------------------------------
    Partition 4*n^2 WORKING array fwork into [fwork(2*n^2), dxRows(2*n^2)].

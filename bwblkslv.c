@@ -186,7 +186,7 @@ void mexFunction(const int nlhs, mxArray *plhs[],
  mwIndex m,n, j, k, nsuper, inz;
  double *y, *fwork;
  const double *permPr, *b, *xsuperPr;
- const mwIndex *yjc, *yir, *bjc, *bir;
+ const mwIndex *yjc=NULL, *yir=NULL, *bjc=NULL, *bir=NULL;
  mwIndex *perm, *xsuper, *iwork, *snode;
  jcir L;
  char bissparse;

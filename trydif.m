@@ -52,7 +52,7 @@ else
     halfxz = (x(ix(1):ix(2)-1).*z(ix(1):ix(2)-1)...
         + ddot(x(ix(2):ix(3)-1),z,K.qblkstart)) / 2;
     tmp = halfxz.^2 - detxz;
-    if tmp > 0
+    if all(tmp > 0)
         lab2q = halfxz + sqrt(tmp);
     else
         lab2q = halfxz;

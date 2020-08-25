@@ -50,7 +50,7 @@ if ~isempty(K.q)
     reltr = x(ix(1):ix(2)-1).*dx(ix(1):ix(2)-1)...
         - ddot(x(ix(2):ix(3)-1),dx,K.qblkstart);
     norm2 = reltr.^2 - tdet(dx,K).*auxx.tdet;
-    if norm2 > 0
+    if all(norm2 > 0)
         norm2 = sqrt(norm2);
     end
     mindxq = min( (reltr - norm2)./auxx.tdet);

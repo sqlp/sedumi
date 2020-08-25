@@ -91,7 +91,7 @@ while (t < 0.5 * tR) || ( (fullt-tR) + (1e-7 * fullt) < (tR - t) ) || ntry==0
         halfxz = (xM(ix(1):ix(2)-1).*zM(ix(1):ix(2)-1)...
             + ddot(xM(ix(2):ix(3)-1),zM,K.qblkstart)) / 2;
         tmp = halfxz.^2 - detxz;
-        if tmp > 0
+        if all(tmp > 0)
             lab2q = halfxz + sqrt(tmp);
         else
             lab2q = halfxz;

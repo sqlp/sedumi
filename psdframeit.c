@@ -107,9 +107,9 @@ void psdframeit(double *x, const double *frms, const double *lab,
 void mexFunction(const int nlhs, mxArray *plhs[],
   const int nrhs, const mxArray *prhs[])
 {
-  mwIndex i,lendiag, lenfull, lenud,qsize;
+  mwIndex i, lendiag, lenud, qsize;
   double *x, *fwork;
-  const double *lab,*frms;
+  const double *lab, *frms;
   mwIndex *sdpNL;
   coneK cK;
 /* ------------------------------------------------------------
@@ -126,7 +126,6 @@ void mexFunction(const int nlhs, mxArray *plhs[],
    ------------------------------------------------------------ */
   lenud = cK.rDim + cK.hDim;
   qsize = lenud + cK.hLen;
-  lenfull = cK.lpN +  cK.qDim + lenud;
   lendiag = cK.lpN + 2 * cK.lorN + cK.rLen + cK.hLen;
 /* ------------------------------------------------------------
    Get inputs lab,frms

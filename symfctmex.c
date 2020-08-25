@@ -136,7 +136,6 @@ void mexFunction(const int nlhs, mxArray *plhs[],
     *invp, *colcnt;
   mxArray *L_FIELD;
   const char *LFieldnames[] = {"L", "perm", "xsuper"};
-  mwIndex *mwXjc, *mwXir, *mwLjc, *mwLir;
 /* ------------------------------------------------------------
    Check for proper number of arguments
    ------------------------------------------------------------ */
