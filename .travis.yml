@@ -6,8 +6,7 @@ addons:
     packages: octave liboctave-dev libopenblas-dev
     update: true
   homebrew:
-    packages: bar
-    update: true
+    packages: octave
 jobs:
   include:
     - os: linux
