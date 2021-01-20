@@ -1,4 +1,4 @@
-language: shell
+language: matlab
 notifications:
   email: false
 addons:
@@ -9,6 +9,9 @@ addons:
     packages: octave
 jobs:
   include:
+    - os: linux
+      dist: bionic
+      script: matlab -batch 'cd examples; test_sedumi(1, 1);'
     - os: linux
       dist: xenial # 16.04 LTS, Octave 4.0.0
       script: octave --eval "cd examples; test_sedumi(1, 1);"
@@ -22,5 +25,4 @@ jobs:
       - sudo snap install octave
       script: octave --eval "cd examples; test_sedumi(1, 1);"
     - os: osx
-      osx_image: xcode12
       script: octave --eval "cd examples; test_sedumi(1, 1);"
