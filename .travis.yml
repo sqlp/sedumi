@@ -23,4 +23,5 @@ jobs:
       - sudo snap install octave
       script: octave --eval "cd examples; test_sedumi(1, 1);"
     - os: osx
+      osx_image: xcode12
       script: octave --eval "cd examples; test_sedumi(1, 1);"
