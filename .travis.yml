@@ -7,7 +7,6 @@ addons:
     update: true
   homebrew:
     packages: octave
-    update: true
 jobs:
   include:
     - os: linux
@@ -27,4 +26,7 @@ jobs:
       - sudo snap install octave
       script: octave --eval "cd examples; test_sedumi(1, 1);"
     - os: osx
+      # Need macOS version, see
+      # https://travis-ci.community/t/macos-build-fails-because-of-homebrew-bundle-unknown-command/7296/28
+      osx_image: xcode12
       script: octave --eval "cd examples; test_sedumi(1, 1);"
