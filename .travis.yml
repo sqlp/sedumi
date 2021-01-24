@@ -11,7 +11,7 @@ jobs:
   include:
     - os: linux
       dist: bionic
-      before_install: matlab
+      language: matlab
       script: matlab -batch 'cd examples; test_sedumi(1, 1);'
     - os: linux
       dist: xenial # 16.04 LTS, Octave 4.0.0
