@@ -24,7 +24,7 @@ jobs:
       before_install:
       - sudo apt-get -y install snapd
       - sudo snap install octave
-      script: octave --eval "cd examples; test_sedumi(1, 1);"
+      script: snap run octave --eval "cd examples; test_sedumi(1, 1);"
     - os: osx
       # Need macOS version, see
       # https://travis-ci.community/t/macos-build-fails-because-of-homebrew-bundle-unknown-command/7296/28
