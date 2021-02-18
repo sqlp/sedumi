@@ -25,6 +25,15 @@ jobs:
       - sudo apt-get -y install snapd
       - sudo snap install octave
       script: snap run octave --eval "cd examples; test_sedumi(1, 1);"
+    - os: linux
+      dist: bionic # 18.04 LTS, Octave 6.1.0 (flatpak)
+      before_install:
+      - sudo apt-get -y install flatpak
+      - flatpak remote-add --user --if-not-exists
+                flathub https://flathub.org/repo/flathub.flatpakrepo
+      - flatpak install --user -y flathub org.octave.Octave
+      script:
+      - flatpak run org.octave.Octave --eval "cd examples; test_sedumi(1, 1);"
     - os: osx
       # Need macOS version, see
       # https://travis-ci.community/t/macos-build-fails-because-of-homebrew-bundle-unknown-command/7296/28
