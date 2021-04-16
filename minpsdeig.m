@@ -67,7 +67,7 @@ for i = 1 : nc
     XX = XX + XX';
     if ki > 500
         if nnz(XX) < 0.1 * numel(XX), XX = sparse(XX); end
-        [v,eigv(i),flag] = eigs(XX,1,'SA',struct('issym',true)); %#ok
+        [v,eigv(i),flag] = eigs(XX,1,'SA');  % 'SA' == 'smallestreal' (since R2017b)
         if flag, eigv(i) = min(eig(XX)); end
     else
         eigv(i) = min(eig(XX));
