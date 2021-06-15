@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Octave by Chocolatey
-        run: choco install octave
+        run: choco install octave.portable
 
       - name: Run basic SeDuMi tests
         run: octave --eval "cd examples; test_sedumi(1, 1);"
@@ -68,7 +68,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Octave
-        run: sudo apt-get -y install octave
+        run: sudo apt-get -y install octave gcc
 
       - name: Run basic SeDuMi tests
         run: octave --eval "cd examples; test_sedumi(1, 1);"
@@ -83,7 +83,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Octave
-        run: sudo apt-get -y install octave
+        run: sudo apt-get -y install octave gcc
 
       - name: Run basic SeDuMi tests
         run: octave --eval "cd examples; test_sedumi(1, 1);"
@@ -100,7 +100,7 @@ jobs:
       - name: Install Octave
         run: |
           sudo apt-get -y install flatpak
-          flatpak remote-add --user --if-not-exists
+          flatpak remote-add --user --if-not-exists \
                   flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak install --user -y flathub org.octave.Octave
 
