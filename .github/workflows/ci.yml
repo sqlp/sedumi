@@ -55,9 +55,10 @@ jobs:
       - name: Install Octave by Chocolatey
         run: choco install octave.portable
 
+      - run: dir C:\ProgramData\chocolatey\lib\octave.portable\tools
+
       - name: Run basic SeDuMi tests
-        run: |
-          C:\ProgramData\chocolatey\bin\octave.exe --eval "cd examples; test_sedumi(1, 1);"
+        run: octave --eval "cd examples; test_sedumi(1, 1);"
 
 
   ubuntu-20_04-octave:
