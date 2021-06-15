@@ -55,6 +55,9 @@ jobs:
       - name: Install Octave by Chocolatey
         run: choco install octave.portable
 
+      - name: Find Octave
+        run: dir /s octave-cli.exe
+
       - name: Run basic SeDuMi tests
         run: octave --eval "cd examples; test_sedumi(1, 1);"
 
@@ -68,7 +71,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Octave
-        run: sudo apt-get -y install octave gcc
+        run: sudo apt-get -y install octave liboctave-dev
 
       - name: Run basic SeDuMi tests
         run: octave --eval "cd examples; test_sedumi(1, 1);"
@@ -83,7 +86,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Octave
-        run: sudo apt-get -y install octave gcc
+        run: sudo apt-get -y install octave liboctave-dev
 
       - name: Run basic SeDuMi tests
         run: octave --eval "cd examples; test_sedumi(1, 1);"
