@@ -311,7 +311,7 @@ pars = checkpars(pars,lponly);
 % ----------------------------------------
 % Print welcome
 % ----------------------------------------
-my_fprintf(pars.fid,'SeDuMi 1.3.4 by AdvOL, 2005-2008 and Jos F. Sturm, 1998-2003.\n');
+my_fprintf(pars.fid,'SeDuMi 1.3.5 by AdvOL, 2005-2008 and Jos F. Sturm, 1998-2003.\n');
 % ----------------------------------------
 % Print statistics of cone-problem
 % ----------------------------------------
