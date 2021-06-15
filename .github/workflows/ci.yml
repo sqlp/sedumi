@@ -1,0 +1,127 @@
+name: Basic SeDuMi tests
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+
+  matlab:
+    name: Matlab (latest) on Ubuntu (latest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install MATLAB
+        uses: matlab-actions/setup-matlab@v0
+
+      - name: Run basic SeDuMi tests
+        uses: matlab-actions/run-command@v0
+        with:
+          command: cd examples; test_sedumi(1, 1);
+
+
+  macos-octave:
+    name: Octave (latest) on macOS (latest)
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install Octave by homebrew
+        run: brew install octave
+
+      - name: Run basic SeDuMi tests
+        run: octave --eval "cd examples; test_sedumi(1, 1);"
+
+
+  windows-octave:
+    name: Octave (latest) on MS Windows (latest)
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install Octave by Chocolatey
+        run: choco install octave.portable
+
+      #FIXME: Something is still wrong here =(
+      #- name: Run basic SeDuMi tests
+      #  run: octave --eval "cd examples; test_sedumi(1, 1);"
+
+
+  ubuntu-20_04-octave:
+    name: Octave 5.2.0 on Ubuntu 20.04
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install Octave
+        run: sudo apt-get -y install octave liboctave-dev libopenblas-dev
+
+      - name: Run basic SeDuMi tests
+        run: octave --eval "cd examples; test_sedumi(1, 1);"
+
+
+  ubuntu-18_04-octave:
+    name: Octave 4.2.2 on Ubuntu 18.04
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install Octave
+        run: sudo apt-get -y install octave liboctave-dev libopenblas-dev
+
+      - name: Run basic SeDuMi tests
+        run: octave --eval "cd examples; test_sedumi(1, 1);"
+
+
+  flatpak-octave:
+    name: Octave (latest) on Flatpak (latest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install Octave
+        run: |
+          sudo apt-get -y install flatpak
+          flatpak remote-add --user --if-not-exists \
+                  flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user -y flathub org.octave.Octave
+
+      - name: Run basic SeDuMi tests
+        run: |
+          flatpak run org.octave.Octave --eval "cd examples; test_sedumi(1, 1);"
+
+
+  snap-octave:
+    name: Octave (latest) on Snap (latest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install Octave
+        run: |
+          sudo apt-get -y install snapd
+          sudo snap install octave
+
+      - name: Run basic SeDuMi tests
+        run: snap run octave --eval "cd examples; test_sedumi(1, 1);"
