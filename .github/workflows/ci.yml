@@ -55,9 +55,8 @@ jobs:
       - name: Install Octave by Chocolatey
         run: choco install octave.portable
 
-      #FIXME: Something is still wrong here =(
-      #- name: Run basic SeDuMi tests
-      #  run: octave --eval "cd examples; test_sedumi(1, 1);"
+      - name: Run basic SeDuMi tests
+        run: octave-cli.exe --eval "cd examples; test_sedumi(1, 1);"
 
 
   ubuntu-20_04-octave:
