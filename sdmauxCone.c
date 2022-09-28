@@ -93,7 +93,7 @@ void conepars(const mxArray *mxK, coneK *pK)
    pK->rsdpN = pK->sdpN;                           /* default to all real */
  else
    pK->rsdpN = (mwSize) mxGetScalar(K_FIELD);
-   mxAssert(pK->rsdpN <= pK->sdpN, "K.rsdpN mismatches K.s");
+ mxAssert(pK->rsdpN <= pK->sdpN, "K.rsdpN mismatches K.s");
  /* --------------------------------------------------
     GET STATISTICS: try to read from K, otherwise compute them.
     -------------------------------------------------- */
