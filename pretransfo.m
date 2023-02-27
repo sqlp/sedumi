@@ -140,7 +140,7 @@ else
     if any(K.scomplex~=floor(K.scomplex)) || any(K.scomplex<1)
         error('K.scomplex should contain only positive integers');
     elseif any(K.scomplex>L_s)
-        error('Elements of K.xcomplex are out of range');
+        error('Elements of K.scomplex are out of range');
     end
 end
 if L_z
@@ -473,7 +473,7 @@ if K.rsdpN < length(K.s)
     imgv  = cols >= dsize;
     cols  = cols - imgv .* dsize;
     indxs = max(rows,cols) + min(rows,cols) .* dsize + imgv .* jsize(dblks) + istrt;
-    vals  = ( 1 - 2 * ( cols > rows ) ) .* ( 1 - ( 1 + 1j ) .* imgv );
+    vals = 1 + imgv .* (-1 + 1j * (1 - 2 * (rows > cols) ) );
     keep  = ~imgv | ( rows ~= cols );
     jndxs = rows + cols .* dsize + jstrt(dblks);
     ii{end+1} = indxs(keep);
