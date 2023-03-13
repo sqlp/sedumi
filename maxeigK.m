@@ -92,7 +92,7 @@ if ns
         XX = XX + XX';
         if ki > 500
             if nnz(XX) < 0.1 * numel(XX), XX = sparse(XX); end
-            [v,val,flag] = eigs(XX,1,'LA',struct('issym',true)); %#ok
+            [v,val,flag] = eigs(XX,1,'LA');
             if flag, val = max(eig(XX)); end
         else
             val = max(eig(XX));
