@@ -238,24 +238,12 @@ if (need_rebuild)
   fprintf ('Template: %s\n', mex_template);
 
   % Move to SeDuMi root directory and compile.
-  failed = false;
   olddir = cd (sedumi_path);
   for i = 1:length(targets64)
     fprintf ('   %-16s%s\n', [mex_binaries{i}, ':'], targets64{i});
-    try
-      eval (sprintf (mex_template, targets64{i}));
-    catch
-      failed = true;  % Stop compilation on first error.
-      break;
-    end
+    eval (sprintf (mex_template, targets64{i}));
   end
   cd (olddir);
-
-  if (failed)
-    disp ('Compilation failed.');
-  else
-    disp ('Compilation successful.');
-  end
 end
 
 % Final check if all mex binaries are present.
