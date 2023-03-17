@@ -58,3 +58,13 @@ http://plato.asu.edu/sub/testcases.html.
   > M. Kocvara and J. Zowe. How mathematics can help in design of mechanical
   > structures. In D.F. Griffiths and G.A. Watson, eds., Numerical Analysis
   > 1995, Longman, Harlow, 1996, pp. 76--93.
+  
+
+- **quantum.mat**: A traditional problem from quantum information theory,
+  it computes the probability of succesfully distinguishing two quantum states.
+  It's used to test SeDuMi's support for complex numbers.
+  For details see
+
+  > [Quantum state discrimination](https://en.wikipedia.org/wiki/Quantum_state_discrimination)
+
+  Optimal value is `-0.75395345`
