@@ -1,3 +1,17 @@
+## SeDuMi 1.3.6 (2023-03-17)
+
+> https://github.com/sqlp/sedumi/compare/v1.3.5...v1.3.6
+
+- Bugs fixed:
+  - [#73: fix indentation to get rid of compilation warnings](https://github.com/sqlp/sedumi/issues/73)
+  - [#74: fix complex interface](https://github.com/sqlp/sedumi/issues/74)
+  - [#75: remove eigs warning for function handle matrices](https://github.com/sqlp/sedumi/issues/75)
+  - [#76: install_sedumi.m: remove try-catch block](https://github.com/sqlp/sedumi/issues/76)
+  - [#77: sedumi_version.m: make SeDuMi version detectable](https://github.com/sqlp/sedumi/issues/77)
+  - [#78: add unit test for complex numbers](https://github.com/sqlp/sedumi/issues/78)
+
+Many thanks to @araujoms for his major contributions to this release.
+
 ## SeDuMi 1.3.5 (2021-06-15)
 
 > https://github.com/sqlp/sedumi/compare/v1.3.4...v1.3.5
