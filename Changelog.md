@@ -1,3 +1,10 @@
+## SeDuMi 1.3.7 (2023-03-18)
+
+> https://github.com/sqlp/sedumi/compare/v1.3.6...v1.3.7
+
+- Bugs fixed:
+  - [#79: sedumi.m: use Matlab line continuation](https://github.com/sqlp/sedumi/issues/79)
+
 ## SeDuMi 1.3.6 (2023-03-17)
 
 > https://github.com/sqlp/sedumi/compare/v1.3.5...v1.3.6
