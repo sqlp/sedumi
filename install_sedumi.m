@@ -141,7 +141,7 @@ if (ISOCTAVE)
   case 'x86_64-w64-mingw32'
       mdir = 'o_win';
   otherwise
-    error(sprintf('Unexpected computer type: %s', COMPUTER))
+    error(sprintf('Unexpected computer type: %s', COMPUTER));
   end
 else
   prog = 'Matlab';
