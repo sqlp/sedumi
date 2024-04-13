@@ -26,7 +26,7 @@ jobs:
     - name: Build and test
       uses: matlab-actions/run-command@v2
       with:
-        command: "install_sedumi -rebuild; cd examples; test_sedumi(1, 1)"
+        command: "install_sedumi -rebuild; cd examples; test_sedumi(0, 1)"
     - name: Upload MATLAB MEX files
       uses: actions/upload-artifact@v4
       with:
@@ -35,6 +35,7 @@ jobs:
   build-oct:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-20.04,windows-2019,macos-12,macos-14]
     steps:
@@ -47,21 +48,24 @@ jobs:
       run: |
         if [ "${{ matrix.os }}" = ubuntu-20.04 ]; then
           sudo apt update
-          sudo apt install --no-install-recommends octave liboctave-dev libopenblas-dev
+          sudo snap install octave
+          sudo apt install --no-install-recommends libopenblas-dev
+          echo "OCTAVE=snap run octave" >>$GITHUB_ENV
         elif [ "${{ matrix.os }}" = windows-2019 ]; then
           choco install octave.portable
         else
           brew install octave
+          echo "OCTAVE=octave" >>$GITHUB_ENV
         fi
     - name: Build and test (Unix)
       if: matrix.os != 'windows-2019'
-      run: octave --eval "install_sedumi -rebuild; test_sedumi(1, 1)"
+      run: $OCTAVE --eval "install_sedumi -rebuild; test_sedumi(0, 1)"
     - name: Build and test (Windows)
       if: matrix.os == 'windows-2019'
       shell: cmd
       run: |
         set PATH=C:\ProgramData\chocolatey\bin;%PATH%
-        octave-cli.exe --no-gui --eval "install_sedumi -rebuild; test_sedumi(1, 1)"
+        octave-cli.exe --no-gui --eval "install_sedumi -rebuild; test_sedumi(0, 1)"
         if %errorlevel% neq 0 exit /b %errorlevel%
     - name: Upload Octave MEX files
       uses: actions/upload-artifact@v4
@@ -123,7 +127,7 @@ jobs:
     - name: Run test
       uses: matlab-actions/run-command@v2
       with:
-        command: "install_sedumi; cd examples; test_sedumi(1, 1)"
+        command: "install_sedumi; cd examples; test_sedumi(0, 1)"
   octave-tests:
     needs: package
     runs-on: ${{ matrix.os }}
@@ -143,37 +147,59 @@ jobs:
       run: |
         if [ "${{ matrix.os }}" = ubuntu-latest ]; then
           sudo apt update
-          sudo apt install --no-install-recommends octave snapd flatpak
+          sudo apt install --no-install-recommends octave
         elif [ "${{ matrix.os }}" = windows-latest ]; then
           choco install octave.portable
         else
           brew install octave
         fi
-    - name: Run test
-      if: matrix.os != 'windows-latest'
-      run: octave --eval "install_sedumi; cd examples; test_sedumi(1, 1)"
-    - name: Run test
+    - name: Run test (Unix)
+      shell: bash
+      run: octave --eval "install_sedumi; cd examples; test_sedumi(0, 1)"
+    - name: Run test (Windows)
       if: matrix.os == 'windows-latest'
       shell: cmd
       run: |
         set PATH=C:\ProgramData\chocolatey\bin;%PATH%
-        octave-cli.exe --no-gui --eval "install_sedumi; cd examples; test_sedumi(1, 1)"
-    - name: Flatpak
-      if: matrix.os == 'ubuntu-latest'
+        octave-cli.exe --no-gui --eval "install_sedumi; cd examples; test_sedumi(0, 1)"
+  flatpak-test:
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+    - name: Retrieve artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: bundles
+    - name: Unpack artifact
+      run: tar xfz sedumi.tgz --strip-components=1
+    - name: Install Flatpak octave
       run: |
+        sudo apt update
+        sudo apt install flatpak
         flatpak remote-add --user --if-not-exists \
                 flathub https://flathub.org/repo/flathub.flatpakrepo
         flatpak install --user -y flathub org.octave.Octave
-        flatpak run org.octave.Octave --eval "install_sedumi; cd examples; test_sedumi(1, 1)"
-        flatpak uninstall --user -y org.octave.Octave
-    # - name: Snapd
-    #   if: matrix.os == 'ubuntu-latest'
-    #   run: |
-    #     sudo snap install octave
-    #     snap run octave --eval "install_sedumi; cd examples; test_sedumi(1, 1)"
-    #     sudo snap remove octave
+    - name: Run test
+      shell: bash
+      run: flatpak run org.octave.Octave --eval "install_sedumi; cd examples; test_sedumi(0, 1)"
+  snap-test:
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+    - name: Retrieve artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: bundles
+    - name: Unpack artifact
+      run: tar xfz sedumi.tgz --strip-components=1
+    - name: Install Flatpak octave
+      run: |
+        sudo snap install octave
+    - name: Run test
+      shell: bash
+      run: snap run octave --eval "install_sedumi; cd examples; test_sedumi(0, 1)"
   publish:
-    needs: [matlab-tests,octave-tests]
+    needs: [matlab-tests,octave-tests,flatpak-test,snap-test]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
