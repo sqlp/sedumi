@@ -1,5 +1,7 @@
 # SeDuMi: Optimization over symmetric cones
 
+#### [Click here](https://github.com/sqlp/sedumi/releases/latest) to download the latest SeDuMi bundle. These bundles now include pre-compiled MATLAB and Octave MEX files files for Windows, Linux, and macOS (Intel and Apple Silicon).
+
 **SeDuMi (Self-Dual-Minimization)** is a Matlab/GNU Octave package for solving
 convex optimization problems involving linear equations and inequalities,
 second-order cone constraints, and semidefinite constraints (linear matrix
@@ -89,3 +91,17 @@ You are welcome to submit bug reports or request for help on the
 [GitHub issue page](https://github.com/sqlp/sedumi/issues).
 We cannot guarantee that they will be addressed in a timely fashion,
 we will do our best.
+
+### Development notes
+
+As of April 2024, this repository uses
+[GitHub Actions](https://github.com/features/actions) to compile
+MEX files for Linux, Windows, and macOS (both Intel and Apple
+Silicon variants). Whenever a new Git tag is pushed to the
+repository, these actions automatically create `.zip` and `.tgz`
+bundles of that version of the code, including those compiled
+MEX files, and publishes those bundles to the
+[Releases](https://github.com/sqlp/sedumi/releases) page.
+
+If you wish to contribute fixes or improvements to this repository, please feel free to submit a
+[pull request](https://github.com/sqlp/sedumi/pulls).
