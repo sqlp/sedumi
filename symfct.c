@@ -74,18 +74,23 @@
 
 /* *********************************************************************** */
 
-/* Subroutine */ int sfinit_(neqns, nnza, xadj, adjncy, perm, invp, colcnt,
-  nnzl, nsub, nsuper, snode, xsuper, iwsiz, iwork, iflag)
-integer *neqns, *nnza, *xadj, *adjncy, *perm, *invp, *colcnt, *nnzl, *nsub,
-  *nsuper, *snode, *xsuper, *iwsiz, *iwork, *iflag;
+/* Subroutine */ int sfinit_(integer *neqns, integer *nnza, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *colcnt,
+  integer *nnzl, integer *nsub, integer *nsuper, integer *snode, integer *xsuper, integer *iwsiz, integer *iwork, integer *iflag)
 {
     /* System generated locals */
     integer i__1;
 
     /* Local variables */
-    extern /* Subroutine */ int fsup1_(), fsup2_();
+    extern int fsup1_(integer *neqns, integer *etpar, integer *colcnt, integer *nofsub, integer *nsuper, integer *snode);
+    extern int fsup2_(integer *neqns, integer *nsuper, integer *etpar, integer *snode, integer *xsuper);
     static integer i__;
-    extern /* Subroutine */ int fcnthn_(), chordr_(), etordr_();
+    extern int fcnthn_(integer *neqns, integer *adjlen, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *etpar,
+	integer *rowcnt, integer *colcnt, integer *nlnz, integer *set, integer *prvlf, integer *level, integer *weight, integer *fdesc, integer *nchild,
+                       integer *prvnbr);
+    extern int chordr_(integer *neqns, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *colcnt, integer *parent,
+                       integer *fson, integer *brothr, integer *invpos);
+    extern int etordr_(integer *neqns, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *parent, integer *fson,
+                       integer *brothr, integer *invpos);
 
 
 /*       ----------- */
@@ -217,13 +222,13 @@ integer *neqns, *nnza, *xadj, *adjncy, *perm, *invp, *colcnt, *nnzl, *nsub,
 
 /* *********************************************************************** */
 
-/* Subroutine */ int etordr_(neqns, xadj, adjncy, perm, invp, parent, fson,
-	brothr, invpos)
-integer *neqns, *xadj, *adjncy, *perm, *invp, *parent, *fson, *brothr, *
-	invpos;
+/* Subroutine */ int etordr_(integer *neqns, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *parent, integer *fson,
+	integer *brothr, integer *invpos)
 {
-    extern /* Subroutine */ int etree_(), betree_(), invinv_(), etpost_();
-
+  extern int etree_(integer *neqns, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *parent, integer *ancstr);
+  extern int betree_(integer *neqns, integer *parent, integer *fson, integer *brothr);
+  extern int invinv_(integer *neqns, integer *invp, integer *invp2, integer *perm);
+  extern int etpost_(integer *root, integer *fson, integer *brothr,     integer *invpos, integer *parent, integer *stack);
 
 /* ***********************************************************************
  */
@@ -302,8 +307,7 @@ integer *neqns, *xadj, *adjncy, *perm, *invp, *parent, *fson, *brothr, *
 
 /* *********************************************************************** */
 
-/* Subroutine */ int etree_(neqns, xadj, adjncy, perm, invp, parent, ancstr)
-integer *neqns, *xadj, *adjncy, *perm, *invp, *parent, *ancstr;
+/* Subroutine */ int etree_(integer *neqns, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *parent, integer *ancstr)
 {
     /* System generated locals */
     integer i__1, i__2;
@@ -425,8 +429,7 @@ L300:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int betree_(neqns, parent, fson, brothr)
-integer *neqns, *parent, *fson, *brothr;
+/* Subroutine */ int betree_(integer *neqns, integer *parent, integer *fson, integer *brothr)
 {
     /* System generated locals */
     integer i__1;
@@ -537,8 +540,7 @@ integer *neqns, *parent, *fson, *brothr;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int etpost_(root, fson, brothr, invpos, parent, stack)
-integer *root, *fson, *brothr, *invpos, *parent, *stack;
+/* Subroutine */ int etpost_(integer *root, integer *fson, integer *brothr, integer *invpos, integer *parent, integer *stack)
 {
     /* System generated locals */
     integer i__1;
@@ -664,8 +666,7 @@ L300:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int invinv_(neqns, invp, invp2, perm)
-integer *neqns, *invp, *invp2, *perm;
+/* Subroutine */ int invinv_(integer *neqns, integer *invp, integer *invp2, integer *perm)
 {
     /* System generated locals */
     integer i__1;
@@ -757,13 +758,12 @@ integer *neqns, *invp, *invp2, *perm;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int chordr_(neqns, xadj, adjncy, perm, invp, colcnt, parent,
-	fson, brothr, invpos)
-integer *neqns, *xadj, *adjncy, *perm, *invp, *colcnt, *parent, *fson, *
-	brothr, *invpos;
+/* Subroutine */ int chordr_(integer *neqns, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *colcnt, integer *parent,
+	integer *fson, integer *brothr, integer *invpos)
 {
-    extern /* Subroutine */ int btree2_(), epost2_(), invinv_();
-
+    extern int invinv_(integer *neqns, integer *invp, integer *invp2, integer *perm);
+    extern int btree2_(integer *neqns, integer *parent, integer *colcnt, integer *fson, integer *brothr, integer *lson);
+    extern int epost2_(integer *root, integer *fson, integer *brothr, integer *invpos, integer *parent, integer *colcnt, integer *stack);
 
 /* ***********************************************************************
  */
@@ -845,8 +845,7 @@ integer *neqns, *xadj, *adjncy, *perm, *invp, *colcnt, *parent, *fson, *
 
 /* *********************************************************************** */
 
-/* Subroutine */ int btree2_(neqns, parent, colcnt, fson, brothr, lson)
-integer *neqns, *parent, *colcnt, *fson, *brothr, *lson;
+/* Subroutine */ int btree2_(integer *neqns, integer *parent, integer *colcnt, integer *fson, integer *brothr, integer *lson)
 {
     /* System generated locals */
     integer i__1;
@@ -970,9 +969,8 @@ integer *neqns, *parent, *colcnt, *fson, *brothr, *lson;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int epost2_(root, fson, brothr, invpos, parent, colcnt,
-	stack)
-integer *root, *fson, *brothr, *invpos, *parent, *colcnt, *stack;
+/* Subroutine */ int epost2_(integer *root, integer *fson, integer *brothr, integer *invpos, integer *parent, integer *colcnt,
+	integer *stack)
 {
     /* System generated locals */
     integer i__1;
@@ -1151,12 +1149,9 @@ L300:
 /*    the matrix is purely diagonal, then "segment violation" *) */
 /* *********************************************************************** */
 
-/* Subroutine */ int fcnthn_(neqns, adjlen, xadj, adjncy, perm, invp, etpar,
-	rowcnt, colcnt, nlnz, set, prvlf, level, weight, fdesc, nchild,
-	prvnbr)
-integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *etpar, *rowcnt, *
-	colcnt, *nlnz, *set, *prvlf, *level, *weight, *fdesc, *nchild, *
-	prvnbr;
+/* Subroutine */ int fcnthn_(integer *neqns, integer *adjlen, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *etpar,
+	integer *rowcnt, integer *colcnt, integer *nlnz, integer *set, integer *prvlf, integer *level, integer *weight, integer *fdesc, integer *nchild,
+	integer *prvnbr)
 {
     /* System generated locals */
     integer i__1, i__2;
@@ -1392,8 +1387,7 @@ OF HINBR. */
 
 /* *********************************************************************** */
 
-/* Subroutine */ int fsup1_(neqns, etpar, colcnt, nofsub, nsuper, snode)
-integer *neqns, *etpar, *colcnt, *nofsub, *nsuper, *snode;
+/* Subroutine */ int fsup1_(integer *neqns, integer *etpar, integer *colcnt, integer *nofsub, integer *nsuper, integer *snode)
 {
     /* System generated locals */
     integer i__1;
@@ -1490,8 +1484,7 @@ L300:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int fsup2_(neqns, nsuper, etpar, snode, xsuper)
-integer *neqns, *nsuper, *etpar, *snode, *xsuper;
+/* Subroutine */ int fsup2_(integer *neqns, integer *nsuper, integer *etpar, integer *snode, integer *xsuper)
 {
     static integer kcol, ksup, lstsup;
 
@@ -1591,13 +1584,12 @@ integer *neqns, *nsuper, *etpar, *snode, *xsuper;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int symfct_(neqns, adjlen, xadj, adjncy, perm, invp, colcnt,
-  nsuper, xsuper, snode, nofsub, xlindx, lindx, xlnz, iwsiz, iwork, flag__)
-integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper,
-  *xsuper, *snode, *nofsub, *xlindx, *lindx, *xlnz, *iwsiz, *iwork, *flag__;
+/* Subroutine */ int symfct_(integer *neqns, integer *adjlen, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *colcnt,
+  integer *nsuper, integer *xsuper, integer *snode, integer *nofsub, integer *xlindx, integer *lindx, integer *xlnz, integer *iwsiz, integer *iwork, integer *flag__)
 {
-    extern /* Subroutine */ int symfc2_();
-
+    extern int symfc2_(integer *neqns, integer *adjlen, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *colcnt,
+	integer *nsuper, integer *xsuper, integer *snode, integer *nofsub, integer *xlindx, integer *lindx, integer *xlnz, integer *mrglnk, integer *rchlnk,
+                       integer *marker, integer *flag__);
 
 /* ***********************************************************************
  */
@@ -1700,12 +1692,9 @@ integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper,
 
 /* *********************************************************************** */
 
-/* Subroutine */ int symfc2_(neqns, adjlen, xadj, adjncy, perm, invp, colcnt,
-	nsuper, xsuper, snode, nofsub, xlindx, lindx, xlnz, mrglnk, rchlnk,
-	marker, flag__)
-integer *neqns, *adjlen, *xadj, *adjncy, *perm, *invp, *colcnt, *nsuper, *
-	xsuper, *snode, *nofsub, *xlindx, *lindx, *xlnz, *mrglnk, *rchlnk, *
-	marker, *flag__;
+/* Subroutine */ int symfc2_(integer *neqns, integer *adjlen, integer *xadj, integer *adjncy, integer *perm, integer *invp, integer *colcnt,
+	integer *nsuper, integer *xsuper, integer *snode, integer *nofsub, integer *xlindx, integer *lindx, integer *xlnz, integer *mrglnk, integer *rchlnk,
+	integer *marker, integer *flag__)
 {
     /* System generated locals */
     integer i__1, i__2;

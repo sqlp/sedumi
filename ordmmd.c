@@ -48,12 +48,12 @@
 
 /* *********************************************************************** */
 
-/* Subroutine */ int ordmmd_(neqns, xadj, adjncy, invp, perm, iwsiz, iwork,
-	nofsub, iflag)
-integer *neqns, *xadj, *adjncy, *invp, *perm, *iwsiz, *iwork, *nofsub, *iflag;
+/* Subroutine */ int ordmmd_(integer *neqns, integer *xadj, integer *adjncy, integer *invp, integer *perm, integer *iwsiz, integer *iwork,
+	integer *nofsub, integer *iflag)
 {
     static integer delta;
-    extern /* Subroutine */ int genmmd_();
+    extern int genmmd_(integer *neqns, integer *xadj, integer *adjncy, integer *invp, integer *perm, integer *delta, integer *dhead,
+                       integer *qsize, integer *llist, integer *marker, integer *maxint, integer *nofsub);
     static integer maxint;
 
 
@@ -149,17 +149,22 @@ integer *neqns, *xadj, *adjncy, *invp, *perm, *iwsiz, *iwork, *nofsub, *iflag;
 
 /* *********************************************************************** */
 
-/* Subroutine */ int genmmd_(neqns, xadj, adjncy, invp, perm, delta, dhead,
-	qsize, llist, marker, maxint, nofsub)
-integer *neqns, *xadj, *adjncy, *invp, *perm, *delta, *dhead, *qsize, *llist,
-	*marker, *maxint, *nofsub;
+/* Subroutine */ int genmmd_(integer *neqns, integer *xadj, integer *adjncy, integer *invp, integer *perm, integer *delta, integer *dhead,
+	integer *qsize, integer *llist, integer *marker, integer *maxint, integer *nofsub)
 {
     /* System generated locals */
     integer i__1;
 
     /* Local variables */
     static integer mdeg, ehead, i__, mdlmt, mdnode;
-    extern /* Subroutine */ int mmdelm_(), mmdupd_(), mmdint_(), mmdnum_();
+    extern int mmdelm_(integer *mdnode, integer *xadj, integer *adjncy, integer *dhead, integer *dforw, integer *dbakw, integer *qsize,
+                       integer *llist, integer *marker, integer *maxint, integer *tag);
+    extern int mmdupd_(integer *ehead, integer *neqns, integer *xadj, integer *adjncy, integer *delta, integer *mdeg, integer *dhead,
+                       integer *dforw, integer *dbakw, integer *qsize, integer *llist, integer *marker, integer *maxint, integer *tag);
+    extern int mmdint_(integer *neqns, integer *xadj, integer *adjncy, integer *dhead, integer *dforw, integer *dbakw, integer *qsize,
+                       integer *llist, integer *marker);
+
+    extern int mmdnum_(integer *neqns, integer *perm, integer *invp,  integer *qsize);
     static integer nextmd, tag, num;
 
 
@@ -341,10 +346,8 @@ L1000:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int mmdint_(neqns, xadj, adjncy, dhead, dforw, dbakw, qsize,
-	llist, marker)
-integer *neqns, *xadj, *adjncy, *dhead, *dforw, *dbakw, *qsize, *llist, *
-	marker;
+/* Subroutine */ int mmdint_(integer *neqns, integer *xadj, integer *adjncy, integer *dhead, integer *dforw, integer *dbakw, integer *qsize,
+	integer *llist, integer *marker)
 {
     /* System generated locals */
     integer i__1;
@@ -438,10 +441,8 @@ integer *neqns, *xadj, *adjncy, *dhead, *dforw, *dbakw, *qsize, *llist, *
 
 /* *********************************************************************** */
 
-/* Subroutine */ int mmdelm_(mdnode, xadj, adjncy, dhead, dforw, dbakw, qsize,
-	 llist, marker, maxint, tag)
-integer *mdnode, *xadj, *adjncy, *dhead, *dforw, *dbakw, *qsize, *llist, *
-	marker, *maxint, *tag;
+/* Subroutine */ int mmdelm_(integer *mdnode, integer *xadj, integer *adjncy, integer *dhead, integer *dforw, integer *dbakw, integer *qsize,
+	 integer *llist, integer *marker, integer *maxint, integer *tag)
 {
     /* System generated locals */
     integer i__1, i__2;
@@ -696,8 +697,7 @@ L1800:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int mmdnum_(neqns, perm, invp, qsize)
-integer *neqns, *perm, *invp, *qsize;
+/* Subroutine */ int mmdnum_(integer *neqns, integer *perm, integer *invp, integer *qsize)
 {
     /* System generated locals */
     integer i__1;
@@ -827,10 +827,8 @@ L500:
 
 /* *********************************************************************** */
 
-/* Subroutine */ int mmdupd_(ehead, neqns, xadj, adjncy, delta, mdeg, dhead,
-	dforw, dbakw, qsize, llist, marker, maxint, tag)
-integer *ehead, *neqns, *xadj, *adjncy, *delta, *mdeg, *dhead, *dforw, *dbakw,
-	 *qsize, *llist, *marker, *maxint, *tag;
+/* Subroutine */ int mmdupd_(integer *ehead, integer *neqns, integer *xadj, integer *adjncy, integer *delta, integer *mdeg, integer *dhead,
+	integer *dforw, integer *dbakw, integer *qsize, integer *llist, integer *marker, integer *maxint, integer *tag)
 {
     /* System generated locals */
     integer i__1, i__2;
